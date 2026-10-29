@@ -31,15 +31,23 @@ spring:
       enabled: false
     livereload:
       enabled: false
+  # Todo lo sensible o propio del servidor viene de variables de entorno: ver docs/DEPLOY.md
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:postgresql://localhost:5432/pasalagorra
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/pasalagorra}
+    username: ${DB_USERNAME:pasalagorra}
+    password: ${DB_PASSWORD}
     hikari:
       poolName: Hikari
       auto-commit: false
   mail:
-    host: localhost
-    port: 25
+    host: ${MAIL_HOST:localhost}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail.smtp.auth: ${MAIL_SMTP_AUTH:true}
+      mail.smtp.starttls.enable: ${MAIL_STARTTLS:true}
   thymeleaf:
     cache: true
 
@@ -63,7 +71,9 @@ spring:
 #     ciphers: TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 ,TLS_DHE_RSA_WITH_AES_128_GCM_SHA256 ,TLS_DHE_RSA_WITH_AES_256_GCM_SHA384 ,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,TLS_DHE_RSA_WITH_AES_128_CBC_SHA256,TLS_DHE_RSA_WITH_AES_128_CBC_SHA,TLS_DHE_RSA_WITH_AES_256_CBC_SHA256,TLS_DHE_RSA_WITH_AES_256_CBC_SHA,TLS_RSA_WITH_AES_128_GCM_SHA256,TLS_RSA_WITH_AES_256_GCM_SHA384,TLS_RSA_WITH_AES_128_CBC_SHA256,TLS_RSA_WITH_AES_256_CBC_SHA256,TLS_RSA_WITH_AES_128_CBC_SHA,TLS_RSA_WITH_AES_256_CBC_SHA,TLS_DHE_RSA_WITH_CAMELLIA_256_CBC_SHA,TLS_RSA_WITH_CAMELLIA_256_CBC_SHA,TLS_DHE_RSA_WITH_CAMELLIA_128_CBC_SHA,TLS_RSA_WITH_CAMELLIA_128_CBC_SHA
 # ===================================================================
 server:
-  port: 8080
+  port: ${PORT:8080}
+  # Detrás de nginx u otro proxy con HTTPS: respeta X-Forwarded-Proto/Host
+  forward-headers-strategy: framework
   shutdown: graceful # see https://docs.spring.io/spring-boot/reference/web/graceful-shutdown.html#web.graceful-shutdown
   compression:
     enabled: true
@@ -83,11 +93,15 @@ jhipster:
   security:
     authentication:
       jwt:
+        # 64 bytes al azar en base64: openssl rand -base64 64 | tr -d '\n'
+        base64-secret: ${JWT_SECRET}
         # Token is valid 24 hours
         token-validity-in-seconds: 86400
         token-validity-in-seconds-for-remember-me: 2592000
   mail: # specific JHipster mail property, for standard properties see MailProperties
-    base-url: http://my-server-url-to-change # Modify according to your server's URL
+    # La URL pública del sitio: links de los mails, Open Graph, vueltas de Mercado Pago y Google
+    base-url: ${BASE_URL}
+    from: ${MAIL_FROM:pasalagorra <no-responder@pasalagorra.com.ar>}
   logging:
     use-json-format: false # By default, logs are not in Json format
     logstash: # Forward logs to logstash over a socket, used by LoggingConfiguration
@@ -104,4 +118,22 @@ jhipster:
 # https://www.jhipster.tech/common-application-properties/
 # ===================================================================
 
-# application:
+application:
+  # Primer administrador de una instalación nueva (solo si no hay ninguno)
+  admin-inicial:
+    login: ${ADMIN_LOGIN:admin}
+    email: ${ADMIN_EMAIL:}
+    password: ${ADMIN_PASSWORD:}
+  imagenes:
+    directorio: ${IMAGENES_DIR:/var/lib/pasalagorra/imagenes}
+  pagos:
+    # En producción se cobra con Mercado Pago; "simulada" solo para un entorno de prueba
+    pasarela: ${PASARELA:mercadopago}
+    mercadopago:
+      access-token: ${MP_ACCESS_TOKEN:}
+      client-id: ${MP_CLIENT_ID:}
+      client-secret: ${MP_CLIENT_SECRET:}
+      webhook-secret: ${MP_WEBHOOK_SECRET:}
+      # 32 bytes al azar en base64: openssl rand -base64 32
+      clave-cifrado: ${MP_CLAVE_CIFRADO:}
+  # El login con Google se activa con APPLICATION_GOOGLE_CLIENT_ID y APPLICATION_GOOGLE_CLIENT_SECRET

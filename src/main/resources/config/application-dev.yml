@@ -37,8 +37,8 @@ spring:
       poolName: Hikari
       auto-commit: false
   flyway:
-    # db/dev carga los usuarios de prueba (admin/admin, user/user); no se usa en prod
-    locations: classpath:db/migration,classpath:db/dev
+    # db/dev: usuarios de prueba (admin/admin, user/user); db/demo: campañas y cuentas de demostración. No se usan en prod
+    locations: classpath:db/migration,classpath:db/dev,classpath:db/demo
   messages:
     cache-duration: PT1S # 1 second, see the ISO 8601 standard
   thymeleaf:

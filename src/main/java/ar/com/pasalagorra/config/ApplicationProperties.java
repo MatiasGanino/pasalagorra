@@ -23,12 +23,18 @@ public class ApplicationProperties {
 
     private final Google google = new Google();
 
+    private final AdminInicial adminInicial = new AdminInicial();
+
     /**
      * Cada cuánto corre la tarea que cierra las campañas vencidas y reintenta reembolsos ("-" la apaga).
      */
     private String cierreCron = "0 */15 * * * *";
 
     // jhipster-needle-application-properties-property
+
+    public AdminInicial getAdminInicial() {
+        return adminInicial;
+    }
 
     public Google getGoogle() {
         return google;
@@ -201,6 +207,42 @@ public class ApplicationProperties {
 
         public void setClientSecret(String clientSecret) {
             this.clientSecret = clientSecret;
+        }
+    }
+
+    /**
+     * Primer administrador de una instalación nueva: se crea al arrancar si no hay ningún administrador.
+     */
+    public static class AdminInicial {
+
+        private String login = "admin";
+
+        private String email;
+
+        private String password;
+
+        public String getLogin() {
+            return login;
+        }
+
+        public void setLogin(String login) {
+            this.login = login;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
         }
     }
 

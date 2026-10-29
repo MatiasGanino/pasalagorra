@@ -19,8 +19,23 @@ En dev, los mails no se envían: se escriben en el log del backend, con los link
 | 4     | RF-15 a RF-22                 | Novedades de la campaña, panel del artista con CSV, entrega de recompensas y reclamos de los fans.                                                                                |
 | 5     | RF-21 a RF-24, RNF-12, RNF-13 | Panel del administrador (aportes, recaudación y comisiones por mes), vista previa al compartir (Open Graph), términos, botón de arrepentimiento y auditoría de cambios de estado. |
 
-Falta la etapa 6 (Mercado Pago) y lo que necesita cuentas externas: login con Google, proveedor de mail y hosting. La
-lista completa está en [`specs/PENDIENTES.md`](specs/PENDIENTES.md).
+| 6 | RF-10, RF-01 | Mercado Pago con split (vinculación OAuth de cada artista, webhook firmado, devoluciones), login con Google y comisión fijada en cada campaña. |
+
+Para producción hacen falta cuentas externas (servidor, Mercado Pago, mail, Google): ver
+[`docs/DEPLOY.md`](docs/DEPLOY.md) y [`specs/PENDIENTES.md`](specs/PENDIENTES.md).
+
+## Probarlo en tu máquina
+
+Con el perfil dev se cargan datos de demostración (campañas con imágenes, aportes, novedades y un reclamo):
+
+| Usuario           | Contraseña | Qué ve                                                                                                |
+| ----------------- | ---------- | ----------------------------------------------------------------------------------------------------- |
+| `admin`           | `admin`    | Administración: revisión de campañas (hay una en revisión), aportes, reclamos, recaudación, auditoría |
+| `user`            | `user`     | Artista "Los Pasalagorra": panel de campañas, entregas, novedades                                     |
+| `fan`             | `fan123`   | Fan: Mis aportes, una recompensa entregada, reclamos, arrepentimiento                                 |
+| `murga`, `cumbia` | `user`     | Otros dos artistas                                                                                    |
+
+Los pagos usan la pasarela simulada: al aportar aparece un botón "Pagar". Los mails se escriben en el log del backend.
 
 ## Cómo está organizado
 
