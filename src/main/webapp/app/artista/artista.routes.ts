@@ -26,6 +26,13 @@ const routes: Routes = [
     canActivate: [userRouteAccessService],
   },
   {
+    path: 'campanias/:id/panel',
+    loadComponent: () => import('./panel/panel-campania'),
+    title: 'global.menu.panel',
+    data: deArtista,
+    canActivate: [userRouteAccessService],
+  },
+  {
     path: 'campanias/:id',
     loadComponent: () => import('./campanias/editar-campania'),
     title: 'global.menu.campanias',

@@ -33,12 +33,14 @@
         "database": "Base de datos",
         "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)",
         "artistas": "Artistas",
-        "campanias": "Campañas"
+        "campanias": "Campañas",
+        "reclamos": "Reclamos"
       },
       "language": "Idioma",
       "campanias": "Mis campañas",
       "campania": "Campaña",
-      "pago": "Pago"
+      "pago": "Pago",
+      "panel": "Panel de la campaña"
     },
     "form": {
       "username.label": "Usuario",

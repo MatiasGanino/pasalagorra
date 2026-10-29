@@ -9,12 +9,12 @@ import { AccountService } from 'app/core/auth';
 import { StateStorageService } from 'app/core/auth/state-storage.service';
 import { mensajeDeError } from 'app/shared/errores';
 
-import { CampaniaPublica, ESTADOS_CAMPANIA } from '../campania.model';
+import { CampaniaPublica, ESTADOS_CAMPANIA, Novedad } from '../campania.model';
 import Progreso from '../progreso/progreso';
 
 /**
- * Página pública de una campaña (RF-08) y punto de partida del aporte (RF-10): el fan elige recompensa y monto y pasa
- * directo al pago.
+ * Página pública de una campaña (RF-08), con sus novedades (RF-15), y punto de partida del aporte (RF-10): el fan elige
+ * recompensa y monto y pasa directo al pago.
  */
 @Component({
   selector: 'jhi-campania-publica',
@@ -24,6 +24,7 @@ import Progreso from '../progreso/progreso';
 export default class CampaniaPublicaComponent implements OnInit {
   readonly slug = input.required<string>();
   readonly campania = signal<CampaniaPublica | null>(null);
+  readonly novedades = signal<Novedad[]>([]);
   readonly noExiste = signal(false);
   readonly imagenActual = signal(0);
   readonly ocupado = signal(false);
@@ -50,6 +51,9 @@ export default class CampaniaPublicaComponent implements OnInit {
       },
       error: () => this.noExiste.set(true),
     });
+    this.http
+      .get<Novedad[]>(`${serverApiUrl}api/public/campanias/${this.slug()}/novedades`)
+      .subscribe({ next: novedades => this.novedades.set(novedades), error: () => this.novedades.set([]) });
   }
 
   aportar(recompensaId: number | null, monto: number): void {

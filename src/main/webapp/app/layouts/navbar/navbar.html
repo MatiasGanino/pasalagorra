@@ -107,6 +107,12 @@
               </a>
             </li>
             <li>
+              <a class="dropdown-item" routerLink="/admin/reclamos" routerLinkActive="active" (click)="collapseNavbar()">
+                <fa-icon icon="flag" [fixedWidth]="true" />
+                <span jhiTranslate="global.menu.admin.reclamos">Reclamos</span>
+              </a>
+            </li>
+            <li>
               <a class="dropdown-item" routerLink="/admin/metrics" routerLinkActive="active" (click)="collapseNavbar()">
                 <fa-icon icon="tachometer-alt" [fixedWidth]="true" />
                 <span jhiTranslate="global.menu.admin.metrics">Métricas</span>

@@ -166,6 +166,34 @@ public class MailService {
     }
 
     /**
+     * RF-15: novedad que publicó el artista, para los que aportaron a la campaña.
+     */
+    @Async
+    public void sendNovedad(User user, String titulo, String slug, String tituloNovedad, String texto) {
+        LOG.debug("Sending campaign news to '{}'", user.getEmail());
+        sendEmailFromTemplateSync(
+            user,
+            "mail/novedad",
+            "email.novedad.title",
+            Map.of("titulo", titulo, "slug", slug, "tituloNovedad", tituloNovedad, "texto", texto)
+        );
+    }
+
+    /**
+     * RF-22 y RNF-12: respuesta del administrador a un reclamo o a un pedido de arrepentimiento.
+     */
+    @Async
+    public void sendReclamoResuelto(User user, String titulo, boolean arrepentimiento, String respuesta) {
+        LOG.debug("Sending claim resolution to '{}'", user.getEmail());
+        sendEmailFromTemplateSync(
+            user,
+            "mail/reclamoResuelto",
+            "email.reclamo.resuelto.title",
+            Map.of("titulo", titulo, "arrepentimiento", arrepentimiento, "respuesta", respuesta)
+        );
+    }
+
+    /**
      * RF-07: aviso al artista de que su campaña se publicó, o volvió a borrador con {@code motivoRechazo}.
      */
     @Async

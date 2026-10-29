@@ -1,0 +1,126 @@
+@if (campania(); as c) {
+  <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
+    <div>
+      <h2 class="mb-1">{{ c.titulo }}</h2>
+      <span class="badge {{ estados[c.estado].clase }}">{{ estados[c.estado].texto }}</span>
+      · <a [routerLink]="['/campania', c.slug]">Ver la página pública</a>
+    </div>
+    <a class="btn btn-outline-secondary" routerLink="/artista/campanias">Volver a mis campañas</a>
+  </div>
+
+  @if (error(); as error) {
+    <div class="alert alert-danger">{{ error }}</div>
+  }
+  @if (mensaje(); as mensaje) {
+    <div class="alert alert-success">{{ mensaje }}</div>
+  }
+
+  <h3 class="h5">Resumen</h3>
+  <p>
+    <strong>{{ total() | currency: 'ARS' : 'symbol-narrow' : '1.0-2' }}</strong> en {{ aportes().length }} aportes confirmados.
+    @if (c.estado === 'EXITOSA') {
+      Marcá cada recompensa cuando la entregues: con la última, la campaña queda cerrada.
+    }
+  </p>
+  @if (resumen().length > 0) {
+    <div class="table-responsive">
+      <table class="table table-sm align-middle">
+        <thead>
+          <tr>
+            <th scope="col">Recompensa</th>
+            <th scope="col">Aportes</th>
+            <th scope="col">Entregadas</th>
+            <th scope="col">Monto</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (fila of resumen(); track fila.recompensa) {
+            <tr>
+              <td>{{ fila.recompensa }}</td>
+              <td>{{ fila.aportes }}</td>
+              <td>{{ fila.conRecompensa ? fila.entregados + ' de ' + fila.aportes : '—' }}</td>
+              <td>{{ fila.monto | currency: 'ARS' : 'symbol-narrow' : '1.0-2' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <div class="d-flex justify-content-between align-items-center mt-4 mb-2">
+    <h3 class="h5 mb-0">Aportes</h3>
+    <button type="button" class="btn btn-sm btn-outline-primary" [disabled]="aportes().length === 0" (click)="descargarCsv()">
+      Descargar CSV
+    </button>
+  </div>
+  @if (aportes().length === 0) {
+    <p class="text-muted">Todavía no hay aportes confirmados.</p>
+  } @else {
+    <div class="table-responsive">
+      <table class="table table-striped align-middle small">
+        <thead>
+          <tr>
+            <th scope="col">Fan</th>
+            <th scope="col">Recompensa</th>
+            <th scope="col">Monto</th>
+            <th scope="col">Fecha</th>
+            <th scope="col">Dirección de envío</th>
+            <th scope="col">Entregado</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (aporte of aportes(); track aporte.id) {
+            <tr>
+              <td>
+                {{ aporte.fan }}<br />
+                <span class="text-muted">{{ aporte.email }}</span>
+              </td>
+              <td>{{ aporte.recompensa ?? 'Aporte libre' }}</td>
+              <td>{{ aporte.monto | currency: 'ARS' : 'symbol-narrow' : '1.0-2' }}</td>
+              <td>{{ aporte.fechaPago | date: 'dd/MM/yyyy' }}</td>
+              <td>{{ aporte.direccionEnvio ?? '—' }}</td>
+              <td>
+                @if (aporte.recompensaId !== null) {
+                  <input
+                    type="checkbox"
+                    class="form-check-input"
+                    [checked]="aporte.entregado"
+                    [disabled]="c.estado !== 'EXITOSA'"
+                    (change)="marcar(aporte, $any($event.target).checked)"
+                    aria-label="Recompensa entregada"
+                  />
+                  @if (aporte.fechaEntrega) {
+                    <span class="text-muted ms-1">{{ aporte.fechaEntrega | date: 'dd/MM' }}</span>
+                  }
+                } @else {
+                  —
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <h3 class="h5 mt-4">Novedades</h3>
+  <form class="mb-4" (ngSubmit)="publicarNovedad()">
+    <div class="mb-2">
+      <label class="form-label" for="titulo">Título</label>
+      <input id="titulo" name="titulo" class="form-control" maxlength="150" required [(ngModel)]="titulo" />
+    </div>
+    <div class="mb-2">
+      <label class="form-label" for="texto">Texto</label>
+      <textarea id="texto" name="texto" class="form-control" rows="4" maxlength="5000" required [(ngModel)]="texto"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary" [disabled]="ocupado() || !titulo.trim() || !texto.trim()">Publicar novedad</button>
+    <span class="small text-muted ms-2">Se muestra en la página de la campaña y les llega por mail a los que aportaron.</span>
+  </form>
+  @for (novedad of novedades(); track novedad.id) {
+    <article class="border-start border-3 ps-3 mb-3">
+      <h4 class="h6 mb-0">{{ novedad.titulo }}</h4>
+      <p class="small text-muted mb-1">{{ novedad.fecha | date: 'dd/MM/yyyy HH:mm' }}</p>
+      <p class="descripcion mb-0">{{ novedad.texto }}</p>
+    </article>
+  }
+}

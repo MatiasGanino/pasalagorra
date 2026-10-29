@@ -39,7 +39,10 @@ import { serverApiUrl } from 'app/config';
                   </td>
                   <td>{{ campania.meta | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</td>
                   <td>{{ campania.fechaCierre | date: 'dd/MM/yyyy' }}</td>
-                  <td class="text-end">
+                  <td class="text-end text-nowrap">
+                    @if (publica(campania)) {
+                      <a class="btn btn-sm btn-primary me-1" [routerLink]="['/artista/campanias', campania.id, 'panel']">Panel</a>
+                    }
                     <a class="btn btn-sm btn-outline-primary" [routerLink]="['/artista/campanias', campania.id]">
                       {{ campania.estado === 'BORRADOR' ? 'Editar' : 'Ver' }}
                     </a>
@@ -61,5 +64,9 @@ export default class MisCampanias implements OnInit {
 
   ngOnInit(): void {
     this.http.get<Campania[]>(`${serverApiUrl}api/mis-campanias`).subscribe(campanias => this.campanias.set(campanias));
+  }
+
+  publica(campania: Campania): boolean {
+    return campania.estado !== 'BORRADOR' && campania.estado !== 'EN_REVISION';
   }
 }

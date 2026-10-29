@@ -2,15 +2,18 @@ package ar.com.pasalagorra.web.rest;
 
 import ar.com.pasalagorra.security.SecurityUtils;
 import ar.com.pasalagorra.service.PagoService;
+import ar.com.pasalagorra.service.ReclamoService;
 import ar.com.pasalagorra.service.dto.AporteDTO;
 import ar.com.pasalagorra.service.dto.NuevoAporteDTO;
+import ar.com.pasalagorra.service.dto.NuevoReclamoDTO;
+import ar.com.pasalagorra.service.dto.ReclamoDTO;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * Aportes del fan logueado (RF-10).
+ * Aportes del fan logueado (RF-10) y sus reclamos (RF-22).
  */
 @RestController
 @RequestMapping("/api/aportes")
@@ -18,8 +21,11 @@ public class AporteResource {
 
     private final PagoService pagoService;
 
-    public AporteResource(PagoService pagoService) {
+    private final ReclamoService reclamoService;
+
+    public AporteResource(PagoService pagoService, ReclamoService reclamoService) {
         this.pagoService = pagoService;
+        this.reclamoService = reclamoService;
     }
 
     /**
@@ -39,6 +45,12 @@ public class AporteResource {
     @GetMapping("/{referencia}")
     public AporteDTO miAporte(@PathVariable String referencia) {
         return pagoService.miAporte(loginActual(), referencia);
+    }
+
+    @PostMapping("/{referencia}/reclamos")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ReclamoDTO reclamar(@PathVariable String referencia, @Valid @RequestBody NuevoReclamoDTO reclamo) {
+        return reclamoService.reportarIncumplimiento(loginActual(), referencia, reclamo.texto());
     }
 
     static String loginActual() {

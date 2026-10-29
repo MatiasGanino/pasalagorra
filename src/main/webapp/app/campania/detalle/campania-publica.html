@@ -46,6 +46,17 @@
       <h2 class="h4">Sobre el proyecto</h2>
       <p class="descripcion">{{ c.descripcion }}</p>
 
+      @if (novedades().length > 0) {
+        <h2 class="h4 mt-4">Novedades</h2>
+        @for (novedad of novedades(); track novedad.id) {
+          <article class="border-start border-3 ps-3 mb-3">
+            <h3 class="h6 mb-0">{{ novedad.titulo }}</h3>
+            <p class="small text-muted mb-1">{{ novedad.fecha | date: 'dd/MM/yyyy' }}</p>
+            <p class="descripcion mb-0">{{ novedad.texto }}</p>
+          </article>
+        }
+      }
+
       <div class="alert alert-light border small mt-4">
         <strong>Todo o nada:</strong> si la campaña no llega a la meta el {{ c.fechaCierre | date: 'dd/MM/yyyy' }}, se te devuelve el aporte
         completo. Un aporte no es una inversión: es un apoyo al artista a cambio de una recompensa, que puede demorarse. La plataforma cobra

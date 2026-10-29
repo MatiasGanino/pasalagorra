@@ -1,0 +1,19 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}" lang="es">
+  <head>
+    <title th:text="#{email.reclamo.resuelto.title}">Respuesta a tu reclamo</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  </head>
+  <body>
+    <p th:text="#{email.activation.greeting(${user.login})}">Estimado/a</p>
+    <p th:if="${arrepentimiento}">Revisamos tu pedido de arrepentimiento del aporte a <strong th:text="${titulo}">la campaña</strong>:</p>
+    <p th:unless="${arrepentimiento}">Revisamos tu reclamo sobre la recompensa de <strong th:text="${titulo}">la campaña</strong>:</p>
+    <p style="white-space: pre-line" th:text="${respuesta}">Respuesta</p>
+    <p>Si tenés alguna duda, respondé este mail.</p>
+    <p>
+      <span th:text="#{email.activation.text2}">Saludos,</span>
+      <br />
+      <em th:text="#{email.signature}">Equipo de pasalagorra.</em>
+    </p>
+  </body>
+</html>

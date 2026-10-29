@@ -2,8 +2,10 @@ package ar.com.pasalagorra.web.rest;
 
 import ar.com.pasalagorra.service.CampaniaService;
 import ar.com.pasalagorra.service.ImagenService;
+import ar.com.pasalagorra.service.NovedadService;
 import ar.com.pasalagorra.service.dto.CampaniaPublicaDTO;
 import ar.com.pasalagorra.service.dto.CampaniaResumenDTO;
+import ar.com.pasalagorra.service.dto.NovedadDTO;
 import java.time.Duration;
 import java.util.List;
 import org.springframework.core.io.Resource;
@@ -14,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import tech.jhipster.web.util.ResponseUtil;
 
 /**
- * Sitio público: campañas e imágenes, sin sesión (RF-08).
+ * Sitio público: campañas, sus novedades e imágenes, sin sesión (RF-08, RF-15).
  */
 @RestController
 @RequestMapping("/api/public")
@@ -24,9 +26,12 @@ public class PublicCampaniaResource {
 
     private final ImagenService imagenService;
 
-    public PublicCampaniaResource(CampaniaService campaniaService, ImagenService imagenService) {
+    private final NovedadService novedadService;
+
+    public PublicCampaniaResource(CampaniaService campaniaService, ImagenService imagenService, NovedadService novedadService) {
         this.campaniaService = campaniaService;
         this.imagenService = imagenService;
+        this.novedadService = novedadService;
     }
 
     @GetMapping("/campanias")
@@ -37,6 +42,11 @@ public class PublicCampaniaResource {
     @GetMapping("/campanias/{slug}")
     public ResponseEntity<CampaniaPublicaDTO> obtener(@PathVariable String slug) {
         return ResponseUtil.wrapOrNotFound(campaniaService.obtenerPublica(slug));
+    }
+
+    @GetMapping("/campanias/{slug}/novedades")
+    public ResponseEntity<List<NovedadDTO>> novedades(@PathVariable String slug) {
+        return ResponseUtil.wrapOrNotFound(novedadService.listarPublicas(slug));
     }
 
     /**

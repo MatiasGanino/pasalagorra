@@ -1,0 +1,21 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}" lang="es">
+  <head>
+    <title th:text="#{email.novedad.title}">Novedades</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  </head>
+  <body>
+    <p th:text="#{email.activation.greeting(${user.login})}">Estimado/a</p>
+    <p>Hay novedades en <strong th:text="${titulo}">la campaña</strong>, que bancaste:</p>
+    <h3 th:text="${tituloNovedad}">Título</h3>
+    <p style="white-space: pre-line" th:text="${texto}">Texto de la novedad</p>
+    <p>
+      <a th:with="url=(@{|${baseUrl}/campania/${slug}|})" th:href="${url}" th:text="${url}">Ver campaña</a>
+    </p>
+    <p>
+      <span th:text="#{email.activation.text2}">Saludos,</span>
+      <br />
+      <em th:text="#{email.signature}">Equipo de pasalagorra.</em>
+    </p>
+  </body>
+</html>

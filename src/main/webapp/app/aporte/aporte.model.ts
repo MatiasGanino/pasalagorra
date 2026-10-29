@@ -21,4 +21,30 @@ export interface Aporte {
   estado: EstadoAporte;
   fechaCreacion: string;
   fechaPago: string | null;
+  entregado: boolean;
+  reclamosAbiertos: TipoReclamo[];
+}
+
+export type TipoReclamo = 'INCUMPLIMIENTO' | 'ARREPENTIMIENTO';
+
+export type EstadoReclamo = 'ABIERTO' | 'RESUELTO';
+
+export interface Reclamo {
+  id: number;
+  tipo: TipoReclamo;
+  texto: string;
+  estado: EstadoReclamo;
+  respuesta: string | null;
+  fecha: string;
+  fechaResolucion: string | null;
+  aporteReferencia: string;
+  monto: number;
+  recompensa: string | null;
+  entregado: boolean;
+  fechaPago: string | null;
+  campaniaTitulo: string;
+  campaniaSlug: string;
+  nombreArtistico: string;
+  fanLogin: string;
+  fanEmail: string | null;
 }

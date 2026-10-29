@@ -32,6 +32,17 @@ public interface AporteRepository extends JpaRepository<Aporte, Long> {
     @EntityGraph(attributePaths = "user")
     List<Aporte> findAllByCampaniaIdAndEstadoIn(Long campaniaId, Collection<EstadoAporte> estados);
 
+    /**
+     * Los aportes aprobados de una campaña, para el panel del artista (RF-17).
+     */
+    @EntityGraph(attributePaths = { "user", "recompensa" })
+    List<Aporte> findAllByCampaniaIdAndEstadoOrderByFechaPagoAsc(Long campaniaId, EstadoAporte estado);
+
+    /**
+     * Si queda alguna recompensa por entregar (RF-18).
+     */
+    boolean existsByCampaniaIdAndEstadoAndRecompensaIsNotNullAndEntregadoFalse(Long campaniaId, EstadoAporte estado);
+
     boolean existsByCampaniaIdAndEstadoIn(Long campaniaId, Collection<EstadoAporte> estados);
 
     @Query("select coalesce(sum(a.monto), 0) from Aporte a where a.campania.id = :campaniaId and a.estado = 'APROBADO'")

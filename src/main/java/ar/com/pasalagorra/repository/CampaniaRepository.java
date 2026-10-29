@@ -27,6 +27,8 @@ public interface CampaniaRepository extends JpaRepository<Campania, Long> {
 
     boolean existsBySlug(String slug);
 
+    Optional<Campania> findOneByIdAndArtistaUserLogin(Long id, String login);
+
     List<Campania> findAllByEstadoAndFechaCierreBefore(EstadoCampania estado, LocalDate fecha);
 
     List<Campania> findAllByEstado(EstadoCampania estado);

@@ -74,3 +74,10 @@ export interface CampaniaResumen {
   diasRestantes: number;
   estado: EstadoCampania;
 }
+
+export interface Novedad {
+  id: number;
+  titulo: string;
+  texto: string;
+  fecha: string;
+}

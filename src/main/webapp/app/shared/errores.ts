@@ -30,6 +30,14 @@ const ERRORES: Partial<Record<string, string>> = {
   'error.agotada': 'Esa recompensa se agotó.',
   'error.montominimo': 'El monto es menor al mínimo de la recompensa.',
   'error.sindireccion': 'Esta recompensa se envía por correo: cargá tu dirección de envío antes de aportar.',
+  // Novedades, entregas y reclamos (RF-15 a RF-22)
+  'error.nopublica': 'Las novedades se publican cuando la campaña ya está publicada.',
+  'error.noentregable': 'Las entregas se marcan mientras la campaña está exitosa (todavía no cerrada).',
+  'error.sinrecompensa': 'Un aporte libre no tiene recompensa que entregar.',
+  'error.noreclamable': 'Solo se reclama la recompensa de un aporte confirmado en una campaña que llegó a la meta.',
+  'error.reclamoabierto': 'Ya tenés un reclamo abierto sobre este aporte.',
+  'error.respuestarequerida': 'Escribí la respuesta para el fan.',
+  'error.yaresuelto': 'El reclamo ya está resuelto.',
 };
 
 export function mensajeDeError(error: HttpErrorResponse): string {

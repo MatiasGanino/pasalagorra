@@ -4,19 +4,25 @@ import ar.com.pasalagorra.domain.Aporte;
 import ar.com.pasalagorra.domain.Campania;
 import ar.com.pasalagorra.domain.EstadoAporte;
 import ar.com.pasalagorra.domain.EstadoCampania;
+import ar.com.pasalagorra.domain.Reclamo;
 import ar.com.pasalagorra.domain.Recompensa;
 import ar.com.pasalagorra.domain.User;
 import ar.com.pasalagorra.repository.AporteRepository;
 import ar.com.pasalagorra.repository.CampaniaRepository;
 import ar.com.pasalagorra.repository.DireccionEnvioRepository;
+import ar.com.pasalagorra.repository.ReclamoRepository;
 import ar.com.pasalagorra.repository.RecompensaRepository;
 import ar.com.pasalagorra.repository.UserRepository;
 import ar.com.pasalagorra.service.dto.AporteDTO;
 import ar.com.pasalagorra.service.dto.NuevoAporteDTO;
 import ar.com.pasalagorra.service.pagos.PasarelaPago;
 import java.time.Instant;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +49,8 @@ public class PagoService {
 
     private final UserRepository userRepository;
 
+    private final ReclamoRepository reclamoRepository;
+
     private final PasarelaPago pasarelaPago;
 
     private final MailService mailService;
@@ -53,6 +61,7 @@ public class PagoService {
         RecompensaRepository recompensaRepository,
         DireccionEnvioRepository direccionEnvioRepository,
         UserRepository userRepository,
+        ReclamoRepository reclamoRepository,
         PasarelaPago pasarelaPago,
         MailService mailService
     ) {
@@ -61,6 +70,7 @@ public class PagoService {
         this.recompensaRepository = recompensaRepository;
         this.direccionEnvioRepository = direccionEnvioRepository;
         this.userRepository = userRepository;
+        this.reclamoRepository = reclamoRepository;
         this.pasarelaPago = pasarelaPago;
         this.mailService = mailService;
     }
@@ -173,10 +183,19 @@ public class PagoService {
 
     @Transactional(readOnly = true)
     public List<AporteDTO> misAportes(String login) {
+        Map<Long, Set<Reclamo.Tipo>> reclamos = reclamoRepository
+            .findAllByAporteUserLoginAndEstado(login, Reclamo.Estado.ABIERTO)
+            .stream()
+            .collect(
+                Collectors.groupingBy(
+                    r -> r.getAporte().getId(),
+                    Collectors.mapping(Reclamo::getTipo, Collectors.toCollection(() -> EnumSet.noneOf(Reclamo.Tipo.class)))
+                )
+            );
         return aporteRepository
             .findAllByUserLoginAndEstadoNotOrderByFechaCreacionDesc(login, EstadoAporte.PENDIENTE)
             .stream()
-            .map(AporteDTO::de)
+            .map(a -> AporteDTO.de(a, reclamos.getOrDefault(a.getId(), Set.of())))
             .toList();
     }
 
