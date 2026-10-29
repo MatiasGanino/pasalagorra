@@ -194,6 +194,20 @@ public class MailService {
     }
 
     /**
+     * RNF-12: constancia del pedido de arrepentimiento, con el código para seguirlo.
+     */
+    @Async
+    public void sendArrepentimientoRecibido(User user, String titulo, String monto, String codigo) {
+        LOG.debug("Sending withdrawal acknowledgement to '{}'", user.getEmail());
+        sendEmailFromTemplateSync(
+            user,
+            "mail/arrepentimientoRecibido",
+            "email.arrepentimiento.title",
+            Map.of("titulo", titulo, "monto", monto, "codigo", codigo)
+        );
+    }
+
+    /**
      * RF-07: aviso al artista de que su campaña se publicó, o volvió a borrador con {@code motivoRechazo}.
      */
     @Async

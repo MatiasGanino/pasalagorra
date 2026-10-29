@@ -107,9 +107,27 @@
               </a>
             </li>
             <li>
+              <a class="dropdown-item" routerLink="/admin/aportes" routerLinkActive="active" (click)="collapseNavbar()">
+                <fa-icon icon="th-list" [fixedWidth]="true" />
+                <span jhiTranslate="global.menu.admin.aportes">Aportes</span>
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" routerLink="/admin/reportes" routerLinkActive="active" (click)="collapseNavbar()">
+                <fa-icon icon="tachometer-alt" [fixedWidth]="true" />
+                <span jhiTranslate="global.menu.admin.reportes">Recaudación</span>
+              </a>
+            </li>
+            <li>
               <a class="dropdown-item" routerLink="/admin/reclamos" routerLinkActive="active" (click)="collapseNavbar()">
                 <fa-icon icon="flag" [fixedWidth]="true" />
                 <span jhiTranslate="global.menu.admin.reclamos">Reclamos</span>
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" routerLink="/admin/auditoria" routerLinkActive="active" (click)="collapseNavbar()">
+                <fa-icon icon="book" [fixedWidth]="true" />
+                <span jhiTranslate="global.menu.admin.auditoria">Auditoría</span>
               </a>
             </li>
             <li>

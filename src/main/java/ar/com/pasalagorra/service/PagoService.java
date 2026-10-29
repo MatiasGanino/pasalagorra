@@ -1,6 +1,7 @@
 package ar.com.pasalagorra.service;
 
 import ar.com.pasalagorra.domain.Aporte;
+import ar.com.pasalagorra.domain.CambioEstado;
 import ar.com.pasalagorra.domain.Campania;
 import ar.com.pasalagorra.domain.EstadoAporte;
 import ar.com.pasalagorra.domain.EstadoCampania;
@@ -55,6 +56,8 @@ public class PagoService {
 
     private final MailService mailService;
 
+    private final AuditoriaService auditoriaService;
+
     public PagoService(
         AporteRepository aporteRepository,
         CampaniaRepository campaniaRepository,
@@ -63,7 +66,8 @@ public class PagoService {
         UserRepository userRepository,
         ReclamoRepository reclamoRepository,
         PasarelaPago pasarelaPago,
-        MailService mailService
+        MailService mailService,
+        AuditoriaService auditoriaService
     ) {
         this.aporteRepository = aporteRepository;
         this.campaniaRepository = campaniaRepository;
@@ -73,6 +77,7 @@ public class PagoService {
         this.reclamoRepository = reclamoRepository;
         this.pasarelaPago = pasarelaPago;
         this.mailService = mailService;
+        this.auditoriaService = auditoriaService;
     }
 
     public record CobroDTO(String referencia, String urlPago) {}
@@ -136,12 +141,14 @@ public class PagoService {
         }
         if (!aprobado) {
             aporte.setEstado(EstadoAporte.RECHAZADO);
+            auditoriaService.registrar(CambioEstado.Entidad.APORTE, aporte.getId(), EstadoAporte.PENDIENTE, EstadoAporte.RECHAZADO, pagoId);
             LOG.info("Pago rechazado del aporte {}", referencia);
             return AporteDTO.de(aporte);
         }
 
         aporte.setEstado(EstadoAporte.APROBADO);
         aporte.setPagoId(pagoId);
+        auditoriaService.registrar(CambioEstado.Entidad.APORTE, aporte.getId(), EstadoAporte.PENDIENTE, EstadoAporte.APROBADO, pagoId);
         aporte.setFechaPago(Instant.now());
         LOG.info("Pago aprobado del aporte {} ({})", referencia, pagoId);
 
@@ -181,6 +188,26 @@ public class PagoService {
         }
     }
 
+    /**
+     * Devuelve un aporte aprobado por arrepentimiento del fan (RNF-12) y libera la unidad de la recompensa. Si la
+     * pasarela no puede, falla y no cambia nada.
+     */
+    public void reembolsarPorArrepentimiento(Long aporteId) {
+        Aporte aporte = aporteRepository.findById(aporteId).orElseThrow();
+        aporte = aporteRepository.findOneByReferenciaParaActualizar(aporte.getReferencia()).orElseThrow();
+        if (aporte.getEstado() != EstadoAporte.APROBADO) {
+            throw new ReglaNegocioException("noreembolsable", "El aporte no está aprobado");
+        }
+        reembolsar(aporte, "pediste la revocación del aporte (arrepentimiento)");
+        if (aporte.getEstado() != EstadoAporte.REEMBOLSADO) {
+            throw new ReglaNegocioException("reembolsofallido", "La pasarela no pudo hacer el reembolso; probá más tarde");
+        }
+        if (aporte.getRecompensa() != null) {
+            Recompensa recompensa = recompensaRepository.findByIdParaActualizar(aporte.getRecompensa().getId()).orElseThrow();
+            recompensa.setCantidadVendida(Math.max(recompensa.getCantidadVendida() - 1, 0));
+        }
+    }
+
     @Transactional(readOnly = true)
     public List<AporteDTO> misAportes(String login) {
         Map<Long, Set<Reclamo.Tipo>> reclamos = reclamoRepository
@@ -212,7 +239,13 @@ public class PagoService {
     }
 
     private void reembolsar(Aporte aporte, String motivo) {
-        if (pasarelaPago.reembolsar(aporte) == PasarelaPago.ResultadoReembolso.HECHO) {
+        EstadoAporte anterior = aporte.getEstado();
+        boolean hecho = pasarelaPago.reembolsar(aporte) == PasarelaPago.ResultadoReembolso.HECHO;
+        EstadoAporte nuevo = hecho ? EstadoAporte.REEMBOLSADO : EstadoAporte.REEMBOLSO_PENDIENTE;
+        if (nuevo != anterior) {
+            auditoriaService.registrar(CambioEstado.Entidad.APORTE, aporte.getId(), anterior, nuevo, motivo);
+        }
+        if (hecho) {
             aporte.setEstado(EstadoAporte.REEMBOLSADO);
             aporte.setFechaReembolso(Instant.now());
             LOG.info("Aporte {} reembolsado: {}", aporte.getReferencia(), motivo);

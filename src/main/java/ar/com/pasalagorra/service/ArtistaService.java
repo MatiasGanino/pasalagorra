@@ -1,6 +1,7 @@
 package ar.com.pasalagorra.service;
 
 import ar.com.pasalagorra.domain.Artista;
+import ar.com.pasalagorra.domain.CambioEstado;
 import ar.com.pasalagorra.domain.EstadoArtista;
 import ar.com.pasalagorra.repository.ArtistaRepository;
 import ar.com.pasalagorra.repository.AuthorityRepository;
@@ -33,16 +34,20 @@ public class ArtistaService {
 
     private final MailService mailService;
 
+    private final AuditoriaService auditoriaService;
+
     public ArtistaService(
         ArtistaRepository artistaRepository,
         UserRepository userRepository,
         AuthorityRepository authorityRepository,
-        MailService mailService
+        MailService mailService,
+        AuditoriaService auditoriaService
     ) {
         this.artistaRepository = artistaRepository;
         this.userRepository = userRepository;
         this.authorityRepository = authorityRepository;
         this.mailService = mailService;
+        this.auditoriaService = auditoriaService;
     }
 
     @Transactional(readOnly = true)
@@ -87,11 +92,16 @@ public class ArtistaService {
         artista.setCiudad(datos.ciudad().trim());
         artista.setProvincia(datos.provincia().trim());
         artista.setBiografia(datos.biografia() == null || datos.biografia().isBlank() ? null : datos.biografia().trim());
+        EstadoArtista anterior = artista.getEstado();
         artista.setEstado(EstadoArtista.PENDIENTE);
         artista.setMotivoRechazo(null);
         artista.setFechaSolicitud(Instant.now());
         artista.setFechaRevision(null);
-        return ArtistaDTO.de(artistaRepository.save(artista));
+        artista = artistaRepository.save(artista);
+        if (anterior != EstadoArtista.PENDIENTE) {
+            auditoriaService.registrar(CambioEstado.Entidad.ARTISTA, artista.getId(), anterior, EstadoArtista.PENDIENTE, null);
+        }
+        return ArtistaDTO.de(artista);
     }
 
     @Transactional(readOnly = true)
@@ -107,6 +117,7 @@ public class ArtistaService {
     public ArtistaDTO aprobar(Long id) {
         Artista artista = pendiente(id);
         artista.setEstado(EstadoArtista.APROBADO);
+        auditoriaService.registrar(CambioEstado.Entidad.ARTISTA, id, EstadoArtista.PENDIENTE, EstadoArtista.APROBADO, null);
         artista.setFechaRevision(Instant.now());
         authorityRepository.findById(AuthoritiesConstants.ARTISTA).ifPresent(rol -> artista.getUser().getAuthorities().add(rol));
         LOG.info("Artista aprobado: {} ({})", artista.getNombreArtistico(), artista.getUser().getLogin());
@@ -121,6 +132,7 @@ public class ArtistaService {
         Artista artista = pendiente(id);
         artista.setEstado(EstadoArtista.RECHAZADO);
         artista.setMotivoRechazo(motivo.trim());
+        auditoriaService.registrar(CambioEstado.Entidad.ARTISTA, id, EstadoArtista.PENDIENTE, EstadoArtista.RECHAZADO, motivo.trim());
         artista.setFechaRevision(Instant.now());
         LOG.info("Artista rechazado: {} ({})", artista.getNombreArtistico(), artista.getUser().getLogin());
         mailService.sendRevisionArtistaEmail(artista.getUser(), artista.getNombreArtistico(), artista.getMotivoRechazo());

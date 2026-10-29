@@ -10,7 +10,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class SpaWebFilter extends OncePerRequestFilter {
 
     /**
-     * Forwards any unmapped paths (except those containing a period) to the client {@code index.html}.
+     * Forwards any unmapped paths (except those containing a period) to the client {@code index.html}. Las páginas de las
+     * campañas no: las sirve {@code OpenGraphController} con sus meta tags (RF-24).
      */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -22,6 +23,7 @@ public class SpaWebFilter extends OncePerRequestFilter {
             !path.startsWith("/management") &&
             !path.startsWith("/v3/api-docs") &&
             !path.contains(".") &&
+            !path.matches("/campania/[^/]+") &&
             path.matches("/(.*)")
         ) {
             request.getRequestDispatcher("/index.html").forward(request, response);

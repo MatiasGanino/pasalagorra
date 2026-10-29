@@ -3,6 +3,7 @@ package ar.com.pasalagorra.service;
 import ar.com.pasalagorra.config.ApplicationProperties;
 import ar.com.pasalagorra.config.Constants;
 import ar.com.pasalagorra.domain.Artista;
+import ar.com.pasalagorra.domain.CambioEstado;
 import ar.com.pasalagorra.domain.Campania;
 import ar.com.pasalagorra.domain.CampaniaImagen;
 import ar.com.pasalagorra.domain.EstadoArtista;
@@ -55,13 +56,16 @@ public class CampaniaService {
 
     private final ApplicationProperties applicationProperties;
 
+    private final AuditoriaService auditoriaService;
+
     public CampaniaService(
         CampaniaRepository campaniaRepository,
         ArtistaRepository artistaRepository,
         ImagenService imagenService,
         RecaudacionService recaudacionService,
         MailService mailService,
-        ApplicationProperties applicationProperties
+        ApplicationProperties applicationProperties,
+        AuditoriaService auditoriaService
     ) {
         this.campaniaRepository = campaniaRepository;
         this.artistaRepository = artistaRepository;
@@ -69,6 +73,7 @@ public class CampaniaService {
         this.recaudacionService = recaudacionService;
         this.mailService = mailService;
         this.applicationProperties = applicationProperties;
+        this.auditoriaService = auditoriaService;
     }
 
     public static LocalDate hoy() {
@@ -98,6 +103,7 @@ public class CampaniaService {
         campania.setFechaCreacion(Instant.now());
         copiar(form, campania);
         campania = campaniaRepository.save(campania);
+        auditoriaService.registrar(CambioEstado.Entidad.CAMPANIA, campania.getId(), null, EstadoCampania.BORRADOR, null);
         LOG.info("Campaña creada: {} ({})", campania.getTitulo(), login);
         return CampaniaDTO.de(campania);
     }
@@ -150,6 +156,7 @@ public class CampaniaService {
             }
         }
         campania.setEstado(EstadoCampania.EN_REVISION);
+        auditoriaService.registrar(CambioEstado.Entidad.CAMPANIA, id, EstadoCampania.BORRADOR, EstadoCampania.EN_REVISION, null);
         campania.setMotivoRechazo(null);
         campania.setFechaEnvioRevision(Instant.now());
         LOG.info("Campaña enviada a revisión: {}", campania.getTitulo());
@@ -172,6 +179,7 @@ public class CampaniaService {
         Campania campania = enRevision(id);
         validarFechaCierre(campania.getFechaCierre());
         campania.setEstado(EstadoCampania.PUBLICADA);
+        auditoriaService.registrar(CambioEstado.Entidad.CAMPANIA, id, EstadoCampania.EN_REVISION, EstadoCampania.PUBLICADA, null);
         campania.setFechaPublicacion(Instant.now());
         LOG.info("Campaña publicada: {}", campania.getTitulo());
         mailService.sendRevisionCampaniaEmail(campania.getArtista().getUser(), campania.getTitulo(), campania.getSlug(), null);
@@ -185,6 +193,7 @@ public class CampaniaService {
         Campania campania = enRevision(id);
         campania.setEstado(EstadoCampania.BORRADOR);
         campania.setMotivoRechazo(motivo.trim());
+        auditoriaService.registrar(CambioEstado.Entidad.CAMPANIA, id, EstadoCampania.EN_REVISION, EstadoCampania.BORRADOR, motivo.trim());
         LOG.info("Campaña rechazada: {}", campania.getTitulo());
         mailService.sendRevisionCampaniaEmail(campania.getArtista().getUser(), campania.getTitulo(), campania.getSlug(), motivo.trim());
         return CampaniaDTO.de(campania);

@@ -7,7 +7,7 @@ import java.util.List;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * Reclamos de los fans, para el administrador (RF-22). {@code /api/admin/**} exige ROLE_ADMIN.
+ * Reclamos de los fans y pedidos de arrepentimiento, para el administrador (RF-22, RNF-12). {@code /api/admin/**} exige ROLE_ADMIN.
  */
 @RestController
 @RequestMapping("/api/admin/reclamos")
@@ -19,7 +19,10 @@ public class AdminReclamoResource {
         this.reclamoService = reclamoService;
     }
 
-    public record Resolucion(String respuesta) {}
+    /**
+     * {@code reembolsar}: en un pedido de arrepentimiento, además devolverle el aporte al fan.
+     */
+    public record Resolucion(String respuesta, Boolean reembolsar) {}
 
     @GetMapping
     public List<ReclamoDTO> listar(@RequestParam(defaultValue = "ABIERTO") Reclamo.Estado estado) {
@@ -28,6 +31,6 @@ public class AdminReclamoResource {
 
     @PostMapping("/{id}/resolver")
     public ReclamoDTO resolver(@PathVariable Long id, @RequestBody Resolucion resolucion) {
-        return reclamoService.resolver(id, resolucion.respuesta());
+        return reclamoService.resolver(id, resolucion.respuesta(), Boolean.TRUE.equals(resolucion.reembolsar()));
     }
 }

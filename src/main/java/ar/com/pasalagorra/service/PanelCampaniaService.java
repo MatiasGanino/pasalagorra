@@ -2,6 +2,7 @@ package ar.com.pasalagorra.service;
 
 import ar.com.pasalagorra.config.Constants;
 import ar.com.pasalagorra.domain.Aporte;
+import ar.com.pasalagorra.domain.CambioEstado;
 import ar.com.pasalagorra.domain.Campania;
 import ar.com.pasalagorra.domain.DireccionEnvio;
 import ar.com.pasalagorra.domain.EstadoAporte;
@@ -47,14 +48,18 @@ public class PanelCampaniaService {
 
     private final DireccionEnvioRepository direccionEnvioRepository;
 
+    private final AuditoriaService auditoriaService;
+
     public PanelCampaniaService(
         CampaniaRepository campaniaRepository,
         AporteRepository aporteRepository,
-        DireccionEnvioRepository direccionEnvioRepository
+        DireccionEnvioRepository direccionEnvioRepository,
+        AuditoriaService auditoriaService
     ) {
         this.campaniaRepository = campaniaRepository;
         this.aporteRepository = aporteRepository;
         this.direccionEnvioRepository = direccionEnvioRepository;
+        this.auditoriaService = auditoriaService;
     }
 
     @Transactional(readOnly = true)
@@ -129,6 +134,13 @@ public class PanelCampaniaService {
             !aporteRepository.existsByCampaniaIdAndEstadoAndRecompensaIsNotNullAndEntregadoFalse(campaniaId, EstadoAporte.APROBADO)
         ) {
             campania.setEstado(EstadoCampania.CERRADA);
+            auditoriaService.registrar(
+                CambioEstado.Entidad.CAMPANIA,
+                campaniaId,
+                EstadoCampania.EXITOSA,
+                EstadoCampania.CERRADA,
+                "recompensas entregadas"
+            );
             LOG.info("Campaña {} cerrada: todas las recompensas entregadas", campania.getSlug());
         }
         return dto(aporte, direccionEnvioRepository.findOneByUserLogin(aporte.getUser().getLogin()).orElse(null));

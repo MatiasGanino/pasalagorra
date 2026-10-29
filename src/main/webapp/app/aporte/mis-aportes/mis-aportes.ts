@@ -54,7 +54,9 @@ import { Aporte, ESTADOS_APORTE } from '../aporte.model';
                     <span class="badge {{ estados[aporte.estado].clase }}">{{ estados[aporte.estado].texto }}</span>
                   </td>
                   <td class="text-end">
-                    @if (aporte.reclamosAbiertos.includes('INCUMPLIMIENTO')) {
+                    @if (aporte.reclamosAbiertos.includes('ARREPENTIMIENTO')) {
+                      <span class="badge bg-info text-dark">Arrepentimiento pedido</span>
+                    } @else if (aporte.reclamosAbiertos.includes('INCUMPLIMIENTO')) {
                       <span class="badge bg-warning text-dark">Reclamo en revisión</span>
                     } @else if (reclamable(aporte) && reclamando() !== aporte.referencia) {
                       <button type="button" class="btn btn-sm btn-outline-danger" (click)="abrirReclamo(aporte)">
@@ -83,6 +85,9 @@ import { Aporte, ESTADOS_APORTE } from '../aporte.model';
           </table>
         </div>
       }
+      <p class="small text-muted">
+        ¿Te arrepentiste de un aporte de los últimos 10 días? Usá el <a routerLink="/arrepentimiento">botón de arrepentimiento</a>.
+      </p>
     }
   `,
 })

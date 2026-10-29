@@ -38,6 +38,10 @@ const ERRORES: Partial<Record<string, string>> = {
   'error.reclamoabierto': 'Ya tenés un reclamo abierto sobre este aporte.',
   'error.respuestarequerida': 'Escribí la respuesta para el fan.',
   'error.yaresuelto': 'El reclamo ya está resuelto.',
+  // Arrepentimiento (RNF-12)
+  'error.noarrepentible': 'Solo se puede revocar un aporte confirmado dentro de los 10 días del pago.',
+  'error.noreembolsable': 'Solo se reembolsa un aporte confirmado, desde un pedido de arrepentimiento.',
+  'error.reembolsofallido': 'Mercado Pago no pudo hacer el reembolso. Probá de nuevo más tarde.',
 };
 
 export function mensajeDeError(error: HttpErrorResponse): string {

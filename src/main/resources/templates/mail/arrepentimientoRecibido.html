@@ -1,0 +1,20 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}" lang="es">
+  <head>
+    <title th:text="#{email.arrepentimiento.title}">Pedido de arrepentimiento</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  </head>
+  <body>
+    <p th:text="#{email.activation.greeting(${user.login})}">Estimado/a</p>
+    <p>
+      Recibimos tu pedido de arrepentimiento del aporte de <strong th:text="${monto}">$ 15.000</strong> a
+      <strong th:text="${titulo}">la campaña</strong>.
+    </p>
+    <p>El código de tu pedido es <strong th:text="${codigo}">ARR-1</strong>. Lo revisamos y te avisamos por mail cuando se resuelva.</p>
+    <p>
+      <span th:text="#{email.activation.text2}">Saludos,</span>
+      <br />
+      <em th:text="#{email.signature}">Equipo de pasalagorra.</em>
+    </p>
+  </body>
+</html>

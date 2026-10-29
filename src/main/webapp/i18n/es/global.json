@@ -34,13 +34,18 @@
         "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)",
         "artistas": "Artistas",
         "campanias": "Campañas",
-        "reclamos": "Reclamos"
+        "reclamos": "Reclamos",
+        "aportes": "Aportes",
+        "reportes": "Recaudación",
+        "auditoria": "Auditoría"
       },
       "language": "Idioma",
       "campanias": "Mis campañas",
       "campania": "Campaña",
       "pago": "Pago",
-      "panel": "Panel de la campaña"
+      "panel": "Panel de la campaña",
+      "terminos": "Términos y condiciones",
+      "arrepentimiento": "Botón de arrepentimiento"
     },
     "form": {
       "username.label": "Usuario",

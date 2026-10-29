@@ -9,6 +9,19 @@ artista) y `ROLE_ADMIN`.
 
 En dev, los mails no se envían: se escriben en el log del backend, con los links de activación y de recuperación.
 
+## Qué hace
+
+| Etapa | Requerimientos                | Qué incluye                                                                                                                                                                       |
+| ----- | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1     | RF-01 a RF-03                 | Cuentas con activación por mail, dirección de envío y alta de artista con DNI/CUIT aprobada por el administrador.                                                                 |
+| 2     | RF-04 a RF-08                 | Campañas con recompensas e imágenes, revisión del administrador y página pública `/campania/{slug}`.                                                                              |
+| 3     | RF-10 a RF-13                 | Aportes con pasarela de pago simulada, comprobante por mail, stock sin sobreventa y cierre todo o nada con reembolsos.                                                            |
+| 4     | RF-15 a RF-22                 | Novedades de la campaña, panel del artista con CSV, entrega de recompensas y reclamos de los fans.                                                                                |
+| 5     | RF-21 a RF-24, RNF-12, RNF-13 | Panel del administrador (aportes, recaudación y comisiones por mes), vista previa al compartir (Open Graph), términos, botón de arrepentimiento y auditoría de cambios de estado. |
+
+Falta la etapa 6 (Mercado Pago) y lo que necesita cuentas externas: login con Google, proveedor de mail y hosting. La
+lista completa está en [`specs/PENDIENTES.md`](specs/PENDIENTES.md).
+
 ## Cómo está organizado
 
 Aplicación JHipster 9 (monolito): API REST en Spring Boot con JWT y el frontend en Angular, en el mismo proyecto.
@@ -19,7 +32,8 @@ Aplicación JHipster 9 (monolito): API REST en Spring Boot con JWT y el frontend
   `--skip-db-changelog` y la migración se escribe a mano.
 - `src/main/resources/db/dev`: usuarios de prueba (`admin`/`admin`, `user`/`user`). Solo la cargan los perfiles dev y
   test; en prod no existen.
-- `specs/`: una especificación por requerimiento (`RF-xx.md`), escrita antes de programarlo.
+- `specs/`: una especificación por requerimiento (`RF-xx.md`, `RNF-xx.md`), escrita antes de programarlo, y los
+  pendientes (`PENDIENTES.md`).
 
 ## Desarrollo local
 
@@ -45,6 +59,9 @@ Requisitos: Java 21, Node 24 y PostgreSQL. No se usa Docker.
    npm install
    npm start
    ```
+
+Las meta tags de Open Graph de `/campania/{slug}` (RF-24) las agrega el backend, así que con `npm start` no se ven:
+para probarlas, compilá el frontend (`npm run webapp:build`) y abrí la campaña en `http://localhost:8080`.
 
 Las credenciales de la base de dev están en `src/main/resources/config/application-secret-samples.yml`, que el perfil
 dev carga después de `application-dev.yml`.

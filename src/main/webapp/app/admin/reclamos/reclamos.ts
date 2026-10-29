@@ -39,6 +39,9 @@ import { mensajeDeError } from 'app/shared/errores';
               <span class="badge {{ reclamo.tipo === 'ARREPENTIMIENTO' ? 'bg-info text-dark' : 'bg-warning text-dark' }} me-1">
                 {{ reclamo.tipo === 'ARREPENTIMIENTO' ? 'Arrepentimiento' : 'Incumplimiento' }}
               </span>
+              @if (reclamo.tipo === 'ARREPENTIMIENTO') {
+                <span class="me-1">ARR-{{ reclamo.id }}</span>
+              }
               <a [routerLink]="['/campania', reclamo.campaniaSlug]">{{ reclamo.campaniaTitulo }}</a>
               <span class="text-muted">de {{ reclamo.nombreArtistico }}</span>
             </h3>
@@ -66,7 +69,10 @@ import { mensajeDeError } from 'app/shared/errores';
               maxlength="2000"
               [(ngModel)]="respuestas[reclamo.id]"
             ></textarea>
-            <button type="button" class="btn btn-sm btn-primary" (click)="resolver(reclamo)">Resolver y avisar al fan</button>
+            <button type="button" class="btn btn-sm btn-primary me-2" (click)="resolver(reclamo, false)">Resolver y avisar al fan</button>
+            @if (reclamo.tipo === 'ARREPENTIMIENTO') {
+              <button type="button" class="btn btn-sm btn-danger" (click)="resolver(reclamo, true)">Reembolsar y avisar al fan</button>
+            }
           }
         </div>
       </div>
@@ -92,10 +98,13 @@ export default class AdminReclamos implements OnInit {
     this.cargar();
   }
 
-  resolver(reclamo: Reclamo): void {
+  resolver(reclamo: Reclamo, reembolsar: boolean): void {
     this.error.set(null);
     this.http
-      .post<Reclamo>(`${serverApiUrl}api/admin/reclamos/${reclamo.id}/resolver`, { respuesta: this.respuestas[reclamo.id] ?? '' })
+      .post<Reclamo>(`${serverApiUrl}api/admin/reclamos/${reclamo.id}/resolver`, {
+        respuesta: this.respuestas[reclamo.id] ?? '',
+        reembolsar,
+      })
       .subscribe({
         next: () => this.cargar(),
         error: (error: HttpErrorResponse) => this.error.set(mensajeDeError(error)),

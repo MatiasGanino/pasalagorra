@@ -44,6 +44,16 @@ const routes: Routes = [
     loadChildren: () => import('./artista/artista.routes'),
   },
   {
+    path: 'terminos',
+    loadComponent: () => import('./legal/terminos'),
+    title: 'global.menu.terminos',
+  },
+  {
+    path: 'arrepentimiento',
+    loadComponent: () => import('./legal/arrepentimiento'),
+    title: 'global.menu.arrepentimiento',
+  },
+  {
     path: 'login',
     loadComponent: () => import('./login/login'),
     title: 'login.title',

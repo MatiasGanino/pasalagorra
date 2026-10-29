@@ -8,12 +8,13 @@ import ar.com.pasalagorra.service.dto.NuevoAporteDTO;
 import ar.com.pasalagorra.service.dto.NuevoReclamoDTO;
 import ar.com.pasalagorra.service.dto.ReclamoDTO;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Size;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * Aportes del fan logueado (RF-10) y sus reclamos (RF-22).
+ * Aportes del fan logueado (RF-10), sus reclamos (RF-22) y el botón de arrepentimiento (RNF-12).
  */
 @RestController
 @RequestMapping("/api/aportes")
@@ -52,6 +53,17 @@ public class AporteResource {
     public ReclamoDTO reclamar(@PathVariable String referencia, @Valid @RequestBody NuevoReclamoDTO reclamo) {
         return reclamoService.reportarIncumplimiento(loginActual(), referencia, reclamo.texto());
     }
+
+    /**
+     * Botón de arrepentimiento (RNF-12); el texto es opcional.
+     */
+    @PostMapping("/{referencia}/arrepentimiento")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ReclamoDTO arrepentirse(@PathVariable String referencia, @Valid @RequestBody(required = false) Arrepentimiento pedido) {
+        return reclamoService.pedirArrepentimiento(loginActual(), referencia, pedido == null ? null : pedido.texto());
+    }
+
+    public record Arrepentimiento(@Size(max = 2000) String texto) {}
 
     static String loginActual() {
         return SecurityUtils.getCurrentUserLogin().orElseThrow();

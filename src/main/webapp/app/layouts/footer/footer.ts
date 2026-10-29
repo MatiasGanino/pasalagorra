@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
-import { TranslateDirective } from 'app/shared/language';
-
+/**
+ * Pie con los términos y el botón de arrepentimiento, visible en todas las páginas (RNF-12).
+ */
 @Component({
   selector: 'jhi-footer',
   templateUrl: './footer.html',
-  imports: [TranslateDirective],
+  imports: [RouterLink],
 })
 export default class Footer {}

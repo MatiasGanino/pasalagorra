@@ -1,6 +1,7 @@
 package ar.com.pasalagorra.service;
 
 import ar.com.pasalagorra.domain.Aporte;
+import ar.com.pasalagorra.domain.CambioEstado;
 import ar.com.pasalagorra.domain.Campania;
 import ar.com.pasalagorra.domain.EstadoAporte;
 import ar.com.pasalagorra.domain.EstadoCampania;
@@ -44,6 +45,8 @@ public class CierreCampaniasService {
 
     private final MailService mailService;
 
+    private final AuditoriaService auditoriaService;
+
     private final TransactionTemplate transaccion;
 
     public CierreCampaniasService(
@@ -52,13 +55,15 @@ public class CierreCampaniasService {
         RecaudacionService recaudacionService,
         PagoService pagoService,
         MailService mailService,
-        PlatformTransactionManager transactionManager
+        PlatformTransactionManager transactionManager,
+        AuditoriaService auditoriaService
     ) {
         this.campaniaRepository = campaniaRepository;
         this.aporteRepository = aporteRepository;
         this.recaudacionService = recaudacionService;
         this.pagoService = pagoService;
         this.mailService = mailService;
+        this.auditoriaService = auditoriaService;
         this.transaccion = new TransactionTemplate(transactionManager);
     }
 
@@ -113,6 +118,13 @@ public class CierreCampaniasService {
         RecaudacionService.Totales totales = recaudacionService.totales(id);
         boolean exitosa = totales.alcanza(campania.getMeta());
         campania.setEstado(exitosa ? EstadoCampania.EXITOSA : EstadoCampania.FALLIDA);
+        auditoriaService.registrar(
+            CambioEstado.Entidad.CAMPANIA,
+            id,
+            EstadoCampania.PUBLICADA,
+            campania.getEstado(),
+            "recaudado " + Montos.formato(totales.recaudado()) + " de " + Montos.formato(campania.getMeta())
+        );
         LOG.info(
             "Campaña {} cerrada como {} ({} de {})",
             campania.getSlug(),
@@ -139,6 +151,13 @@ public class CierreCampaniasService {
         Campania campania = campaniaRepository.findByIdParaActualizar(id).orElseThrow();
         if (campania.getEstado() == EstadoCampania.FALLIDA && !aporteRepository.existsByCampaniaIdAndEstadoIn(id, POR_REEMBOLSAR)) {
             campania.setEstado(EstadoCampania.CERRADA);
+            auditoriaService.registrar(
+                CambioEstado.Entidad.CAMPANIA,
+                id,
+                EstadoCampania.FALLIDA,
+                EstadoCampania.CERRADA,
+                "aportes reembolsados"
+            );
             LOG.info("Campaña {} cerrada: todos los aportes reembolsados", campania.getSlug());
         }
     }

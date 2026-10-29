@@ -52,6 +52,21 @@ const routes: Routes = [
     loadComponent: () => import('./reclamos/reclamos'),
     title: 'global.menu.admin.reclamos',
   },
+  {
+    path: 'aportes',
+    loadComponent: () => import('./aportes/aportes'),
+    title: 'global.menu.admin.aportes',
+  },
+  {
+    path: 'reportes',
+    loadComponent: () => import('./reportes/reportes'),
+    title: 'global.menu.admin.reportes',
+  },
+  {
+    path: 'auditoria',
+    loadComponent: () => import('./auditoria/auditoria'),
+    title: 'global.menu.admin.auditoria',
+  },
   // jhipster-needle-add-admin-route - JHipster will add admin routes here
 ];
 
