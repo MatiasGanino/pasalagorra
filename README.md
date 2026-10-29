@@ -4,7 +4,10 @@ Plataforma argentina de crowdfunding de recompensas para proyectos musicales: el
 plazo y niveles de recompensa, y los fans aportan en pesos. Modelo **todo o nada**: si la campaña no llega a la meta, se
 reembolsa a todos.
 
-Roles: `ROLE_ADMIN` (por ahora, junto con `ROLE_USER` de JHipster; fan y artista llegan en la etapa de Cuentas).
+Roles: `ROLE_USER` (fan: toda cuenta registrada), `ROLE_ARTISTA` (se suma cuando el administrador aprueba el alta de
+artista) y `ROLE_ADMIN`.
+
+En dev, los mails no se envían: se escriben en el log del backend, con los links de activación y de recuperación.
 
 ## Cómo está organizado
 
