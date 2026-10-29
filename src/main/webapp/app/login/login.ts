@@ -1,22 +1,25 @@
-import { AfterViewInit, Component, ElementRef, OnInit, inject, signal, viewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, inject, input, signal, viewChild } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { AccountService } from 'app/core/auth';
+import BotonGoogle from 'app/login/google/boton-google';
 import { LoginService } from 'app/login/login.service';
 import { TranslateDirective } from 'app/shared/language';
 
 @Component({
   selector: 'jhi-login',
-  imports: [TranslateDirective, TranslatePipe, ReactiveFormsModule, RouterLink],
+  imports: [TranslateDirective, TranslatePipe, ReactiveFormsModule, RouterLink, BotonGoogle],
   templateUrl: './login.html',
 })
 export default class Login implements OnInit, AfterViewInit {
   readonly username = viewChild.required<ElementRef>('username');
 
   readonly authenticationError = signal(false);
+  /** {@code ?google=error} cuando el login con Google no salió. */
+  readonly google = input<string>();
 
   loginForm = new FormGroup({
     username: new FormControl('', { nonNullable: true, validators: [Validators.required] }),

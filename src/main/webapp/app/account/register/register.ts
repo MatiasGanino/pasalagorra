@@ -6,6 +6,7 @@ import { RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { EMAIL_ALREADY_USED_TYPE, LOGIN_ALREADY_USED_TYPE } from 'app/shared/jhipster/error.constants';
+import BotonGoogle from 'app/login/google/boton-google';
 import { TranslateDirective } from 'app/shared/language';
 import PasswordStrengthBar from '../password/password-strength-bar/password-strength-bar';
 
@@ -13,7 +14,7 @@ import { RegisterService } from './register.service';
 
 @Component({
   selector: 'jhi-register',
-  imports: [TranslateDirective, TranslatePipe, RouterLink, ReactiveFormsModule, PasswordStrengthBar],
+  imports: [TranslateDirective, TranslatePipe, RouterLink, ReactiveFormsModule, PasswordStrengthBar, BotonGoogle],
   templateUrl: './register.html',
 })
 export default class Register implements AfterViewInit {

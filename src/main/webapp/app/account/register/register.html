@@ -40,6 +40,7 @@
   <div>
     <div>
       @if (!success()) {
+        <jhi-boton-google />
         <form name="form" (ngSubmit)="register()" [formGroup]="registerForm">
           <div class="mb-3">
             <label class="form-label" for="login" jhiTranslate="global.form.username.label">Usuario</label>

@@ -21,12 +21,18 @@ public class ApplicationProperties {
 
     private final Pagos pagos = new Pagos();
 
+    private final Google google = new Google();
+
     /**
      * Cada cuánto corre la tarea que cierra las campañas vencidas y reintenta reembolsos ("-" la apaga).
      */
     private String cierreCron = "0 */15 * * * *";
 
     // jhipster-needle-application-properties-property
+
+    public Google getGoogle() {
+        return google;
+    }
 
     public Pagos getPagos() {
         return pagos;
@@ -169,6 +175,32 @@ public class ApplicationProperties {
 
         public void setUrlAutorizacion(String urlAutorizacion) {
             this.urlAutorizacion = urlAutorizacion;
+        }
+    }
+
+    /**
+     * Login con Google (OAuth2). Sin {@code client-id} el botón no aparece.
+     */
+    public static class Google {
+
+        private String clientId;
+
+        private String clientSecret;
+
+        public String getClientId() {
+            return clientId;
+        }
+
+        public void setClientId(String clientId) {
+            this.clientId = clientId;
+        }
+
+        public String getClientSecret() {
+            return clientSecret;
+        }
+
+        public void setClientSecret(String clientSecret) {
+            this.clientSecret = clientSecret;
         }
     }
 

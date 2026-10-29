@@ -3,6 +3,11 @@
   <h1 class="h2 mb-1" data-cy="loginTitle" jhiTranslate="login.title">Hola de nuevo</h1>
   <p class="text-body-secondary mb-4">Entrá para aportar y seguir tus campañas.</p>
 
+  @if (google() === 'error') {
+    <div class="alert alert-danger">No pudimos ingresar con Google. Probá de nuevo o usá tu usuario y contraseña.</div>
+  }
+  <jhi-boton-google />
+
   @if (authenticationError()) {
     <div class="alert alert-danger" data-cy="loginError" jhiTranslate="login.messages.error.authentication">
       <strong>No pudimos iniciar la sesión.</strong> Revisá el usuario y la contraseña.

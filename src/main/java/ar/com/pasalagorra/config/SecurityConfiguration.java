@@ -4,6 +4,8 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 import ar.com.pasalagorra.security.*;
 import ar.com.pasalagorra.web.filter.SpaWebFilter;
+import ar.com.pasalagorra.web.rest.LoginGoogleHandler;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -36,7 +38,7 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) {
+    public SecurityFilterChain filterChain(HttpSecurity http, ObjectProvider<LoginGoogleHandler> loginGoogle) {
         http.cors(withDefaults())
             .csrf(csrf -> csrf.disable())
             .addFilterAfter(new SpaWebFilter(), BasicAuthenticationFilter.class)
@@ -57,6 +59,7 @@ public class SecurityConfiguration {
                     .requestMatchers("/index.html", "/*.js", "/*.txt", "/*.json", "/*.map", "/*.css").permitAll()
                     .requestMatchers("/*.ico", "/*.png", "/*.svg", "/*.webapp").permitAll()
                     .requestMatchers("/content/**").permitAll()
+                    .requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll()
                     .requestMatchers(HttpMethod.GET, "/campania/*").permitAll()
                     .requestMatchers("/resources/**").permitAll()
                     .requestMatchers("/swagger-ui/**").permitAll()
@@ -86,6 +89,8 @@ public class SecurityConfiguration {
                     .accessDeniedHandler(new BearerTokenAccessDeniedHandler())
             )
             .oauth2ResourceServer(oauth2 -> oauth2.jwt(withDefaults()));
+        // Login con Google, solo si está configurado (GoogleLoginConfiguration)
+        loginGoogle.ifAvailable(handler -> http.oauth2Login(oauth2 -> oauth2.successHandler(handler).failureHandler(handler)));
         return http.build();
     }
 }

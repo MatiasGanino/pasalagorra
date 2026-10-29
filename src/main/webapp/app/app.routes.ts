@@ -61,6 +61,11 @@ const routes: Routes = [
     title: 'global.menu.arrepentimiento',
   },
   {
+    path: 'login/google',
+    loadComponent: () => import('./login/google/vuelta-google'),
+    title: 'login.title',
+  },
+  {
     path: 'login',
     loadComponent: () => import('./login/login'),
     title: 'login.title',
