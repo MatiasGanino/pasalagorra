@@ -56,6 +56,31 @@ public class Aporte implements Serializable {
     @Column(name = "fecha_reembolso")
     private Instant fechaReembolso;
 
+    /**
+     * El artista marcó la recompensa como entregada (RF-18).
+     */
+    @Column(name = "entregado", nullable = false)
+    private boolean entregado;
+
+    @Column(name = "fecha_entrega")
+    private Instant fechaEntrega;
+
+    public boolean isEntregado() {
+        return entregado;
+    }
+
+    public void setEntregado(boolean entregado) {
+        this.entregado = entregado;
+    }
+
+    public Instant getFechaEntrega() {
+        return fechaEntrega;
+    }
+
+    public void setFechaEntrega(Instant fechaEntrega) {
+        this.fechaEntrega = fechaEntrega;
+    }
+
     public Long getId() {
         return id;
     }
