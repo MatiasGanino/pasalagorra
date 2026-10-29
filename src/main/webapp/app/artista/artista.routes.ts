@@ -12,6 +12,13 @@ const routes: Routes = [
     canActivate: [userRouteAccessService],
   },
   {
+    path: 'mercadopago',
+    loadComponent: () => import('./mercadopago/vincular-mercadopago'),
+    title: 'global.menu.mercadopago',
+    data: deArtista,
+    canActivate: [userRouteAccessService],
+  },
+  {
     path: 'campanias',
     loadComponent: () => import('./campanias/mis-campanias'),
     title: 'global.menu.campanias',

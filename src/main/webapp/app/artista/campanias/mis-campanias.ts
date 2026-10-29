@@ -15,6 +15,22 @@ import { serverApiUrl } from 'app/config';
       <a class="btn btn-primary" routerLink="/artista/campanias/nueva">Nueva campaña</a>
     </div>
 
+    @if (mercadoPago(); as mp) {
+      @if (mp.habilitado && !mp.vinculada) {
+        <div class="panel-suave d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+          <div>
+            <strong>Vinculá tu cuenta de Mercado Pago</strong>
+            <p class="small text-body-secondary mb-0">
+              Los aportes llegan directo a tu cuenta, descontada la comisión. Sin vincularla no podés enviar campañas a revisión.
+            </p>
+          </div>
+          <button type="button" class="btn btn-primary" (click)="vincularMercadoPago()">Vincular Mercado Pago</button>
+        </div>
+      } @else if (mp.vinculada) {
+        <p class="small mb-3"><span class="chip chip-exito">✓ Mercado Pago vinculado</span></p>
+      }
+    }
+
     @if (campanias(); as campanias) {
       @if (campanias.length === 0) {
         <p class="text-muted">Todavía no creaste ninguna campaña.</p>
@@ -58,12 +74,22 @@ import { serverApiUrl } from 'app/config';
 })
 export default class MisCampanias implements OnInit {
   readonly campanias = signal<Campania[] | null>(null);
+  readonly mercadoPago = signal<{ habilitado: boolean; vinculada: boolean } | null>(null);
   readonly estados = ESTADOS_CAMPANIA;
 
   private readonly http = inject(HttpClient);
 
   ngOnInit(): void {
     this.http.get<Campania[]>(`${serverApiUrl}api/mis-campanias`).subscribe(campanias => this.campanias.set(campanias));
+    this.http
+      .get<{ habilitado: boolean; vinculada: boolean }>(`${serverApiUrl}api/artista/mercadopago`)
+      .subscribe(estado => this.mercadoPago.set(estado));
+  }
+
+  vincularMercadoPago(): void {
+    this.http.get<{ url: string }>(`${serverApiUrl}api/artista/mercadopago/autorizacion`).subscribe(({ url }) => {
+      window.location.href = url;
+    });
   }
 
   publica(campania: Campania): boolean {

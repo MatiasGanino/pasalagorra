@@ -34,6 +34,13 @@ const routes: Routes = [
     title: 'global.menu.campania',
   },
   {
+    path: 'pago/:referencia',
+    loadComponent: () => import('./aporte/pago-simulado/pago-simulado'),
+    title: 'global.menu.pago',
+    data: { simulado: false },
+    canActivate: [userRouteAccessService],
+  },
+  {
     path: 'pago-simulado/:referencia',
     loadComponent: () => import('./aporte/pago-simulado/pago-simulado'),
     title: 'global.menu.pago',

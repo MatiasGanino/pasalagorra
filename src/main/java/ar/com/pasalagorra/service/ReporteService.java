@@ -61,14 +61,17 @@ public class ReporteService {
 
     /**
      * Recaudación de las campañas exitosas (o exitosas y ya cerradas) agrupada por el mes de cierre, del más nuevo al más
-     * viejo. Las fallidas no suman: sus aportes se reembolsaron. La comisión se calcula con el porcentaje configurado hoy.
+     * viejo. Las fallidas no suman: sus aportes se reembolsaron. La comisión de cada campaña usa el porcentaje que se
+     * fijó al publicarla.
      */
     public List<RecaudacionMensualDTO> recaudacionMensual() {
         Map<YearMonth, Acumulado> meses = new TreeMap<>(Comparator.reverseOrder());
         for (AporteRepository.RecaudacionCampania campania : aporteRepository.recaudacionDeCampaniasExitosas()) {
-            meses.computeIfAbsent(YearMonth.from(campania.getFechaCierre()), mes -> new Acumulado()).sumar(campania);
+            BigDecimal porcentaje =
+                campania.getComisionPorcentaje() != null ? campania.getComisionPorcentaje() : applicationProperties.getComisionPorcentaje();
+            BigDecimal comision = campania.getRecaudado().multiply(porcentaje).divide(CIEN, 2, RoundingMode.HALF_UP);
+            meses.computeIfAbsent(YearMonth.from(campania.getFechaCierre()), mes -> new Acumulado()).sumar(campania, comision);
         }
-        BigDecimal porcentaje = applicationProperties.getComisionPorcentaje();
         return meses
             .entrySet()
             .stream()
@@ -78,7 +81,7 @@ public class ReporteService {
                     e.getValue().campanias,
                     e.getValue().aportes,
                     e.getValue().recaudado,
-                    e.getValue().recaudado.multiply(porcentaje).divide(CIEN, 2, RoundingMode.HALF_UP)
+                    e.getValue().comision
                 )
             )
             .toList();
@@ -89,11 +92,13 @@ public class ReporteService {
         private long campanias;
         private long aportes;
         private BigDecimal recaudado = BigDecimal.ZERO;
+        private BigDecimal comision = BigDecimal.ZERO;
 
-        void sumar(AporteRepository.RecaudacionCampania campania) {
+        void sumar(AporteRepository.RecaudacionCampania campania, BigDecimal comisionCampania) {
             campanias++;
             aportes += campania.getAportes();
             recaudado = recaudado.add(campania.getRecaudado());
+            comision = comision.add(comisionCampania);
         }
     }
 }

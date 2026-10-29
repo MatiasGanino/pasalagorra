@@ -102,6 +102,9 @@ class AdminReporteResourceIT {
         datos.aporte(septiembre, "admin", false, "5000", EstadoAporte.APROBADO, pago);
         datos.aporte(septiembre, "admin", false, "3000", EstadoAporte.REEMBOLSADO, pago);
         Campania entregada = datos.campania("cerrada-sep", EstadoCampania.CERRADA, LocalDate.of(2026, 9, 30));
+        // Publicada cuando la comisión era del 5%: mantiene la suya.
+        entregada.setComisionPorcentaje(new java.math.BigDecimal("5"));
+        campaniaRepository.saveAndFlush(entregada);
         datos.aporte(entregada, "admin", true, "20000", EstadoAporte.APROBADO, pago);
         Campania fallida = datos.campania("fallida-sep", EstadoCampania.CERRADA, LocalDate.of(2026, 9, 20));
         datos.aporte(fallida, "admin", false, "4000", EstadoAporte.REEMBOLSADO, pago);
@@ -122,7 +125,7 @@ class AdminReporteResourceIT {
             .andExpect(jsonPath("$[1].campanias").value(2))
             .andExpect(jsonPath("$[1].aportes").value(3))
             .andExpect(jsonPath("$[1].recaudado").value(35000))
-            .andExpect(jsonPath("$[1].comision").value(2800));
+            .andExpect(jsonPath("$[1].comision").value(2200));
         mockMvc.perform(get("/api/admin/reportes/recaudacion").with(user("user"))).andExpect(status().isForbidden());
     }
 

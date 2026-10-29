@@ -36,12 +36,14 @@ public interface AporteRepository extends JpaRepository<Aporte, Long>, JpaSpecif
         LocalDate getFechaCierre();
         BigDecimal getRecaudado();
         long getAportes();
+        BigDecimal getComisionPorcentaje();
     }
 
     @Query(
-        "select a.campania.id as campaniaId, a.campania.fechaCierre as fechaCierre, sum(a.monto) as recaudado, count(a) as aportes " +
+        "select a.campania.id as campaniaId, a.campania.fechaCierre as fechaCierre, sum(a.monto) as recaudado, count(a) as aportes, " +
+            "a.campania.comisionPorcentaje as comisionPorcentaje " +
             "from Aporte a where a.estado = 'APROBADO' and a.campania.estado in ('EXITOSA', 'CERRADA') " +
-            "group by a.campania.id, a.campania.fechaCierre"
+            "group by a.campania.id, a.campania.fechaCierre, a.campania.comisionPorcentaje"
     )
     List<RecaudacionCampania> recaudacionDeCampaniasExitosas();
 

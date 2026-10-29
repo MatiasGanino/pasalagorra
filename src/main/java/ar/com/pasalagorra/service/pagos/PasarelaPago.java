@@ -1,10 +1,11 @@
 package ar.com.pasalagorra.service.pagos;
 
 import ar.com.pasalagorra.domain.Aporte;
+import ar.com.pasalagorra.domain.Artista;
 
 /**
- * Adaptador de la pasarela de pago. Hoy hay una sola implementación, la simulada; en la etapa 6 se suma Mercado Pago
- * (Checkout Pro con split) y el resto del sistema no cambia.
+ * Adaptador de la pasarela de pago: la simulada para desarrollo y Mercado Pago (Checkout Pro con split) para
+ * producción, según {@code application.pagos.pasarela}. El resto del sistema no sabe cuál está activa.
  * <p>
  * El pago se confirma por notificación de la pasarela, que termina en {@code PagoService.confirmarPago}, nunca por la
  * redirección del navegador.
@@ -19,6 +20,13 @@ public interface PasarelaPago {
      * Devuelve el dinero de un aporte aprobado.
      */
     ResultadoReembolso reembolsar(Aporte aporte);
+
+    /**
+     * Si el artista ya puede recibir pagos (con Mercado Pago, si vinculó su cuenta).
+     */
+    default boolean puedeCobrar(Artista artista) {
+        return true;
+    }
 
     enum ResultadoReembolso {
         HECHO,

@@ -73,9 +73,11 @@ public class ApplicationProperties {
     public static class Pagos {
 
         /**
-         * Pasarela de pago: "simulada" hasta que se integre Mercado Pago (etapa 6).
+         * Pasarela de pago: "simulada" (desarrollo) o "mercadopago".
          */
         private String pasarela = "simulada";
+
+        private final MercadoPago mercadopago = new MercadoPago();
 
         public String getPasarela() {
             return pasarela;
@@ -83,6 +85,90 @@ public class ApplicationProperties {
 
         public void setPasarela(String pasarela) {
             this.pasarela = pasarela;
+        }
+
+        public MercadoPago getMercadopago() {
+            return mercadopago;
+        }
+    }
+
+    /**
+     * Credenciales de la aplicación de Mercado Pago (marketplace con split). Se cargan por variables de entorno, nunca en
+     * el repositorio.
+     */
+    public static class MercadoPago {
+
+        /** Access token de la cuenta de la plataforma (para leer pagos de vendedores sin cuenta vinculada). */
+        private String accessToken;
+
+        private String clientId;
+
+        private String clientSecret;
+
+        /** Clave secreta de las notificaciones (webhooks), para validar la firma {@code x-signature}. */
+        private String webhookSecret;
+
+        /** Clave AES de 256 bits en base64 para guardar cifrados los tokens de los artistas. */
+        private String claveCifrado;
+
+        private String urlApi = "https://api.mercadopago.com";
+
+        private String urlAutorizacion = "https://auth.mercadopago.com.ar/authorization";
+
+        public String getAccessToken() {
+            return accessToken;
+        }
+
+        public void setAccessToken(String accessToken) {
+            this.accessToken = accessToken;
+        }
+
+        public String getClientId() {
+            return clientId;
+        }
+
+        public void setClientId(String clientId) {
+            this.clientId = clientId;
+        }
+
+        public String getClientSecret() {
+            return clientSecret;
+        }
+
+        public void setClientSecret(String clientSecret) {
+            this.clientSecret = clientSecret;
+        }
+
+        public String getWebhookSecret() {
+            return webhookSecret;
+        }
+
+        public void setWebhookSecret(String webhookSecret) {
+            this.webhookSecret = webhookSecret;
+        }
+
+        public String getClaveCifrado() {
+            return claveCifrado;
+        }
+
+        public void setClaveCifrado(String claveCifrado) {
+            this.claveCifrado = claveCifrado;
+        }
+
+        public String getUrlApi() {
+            return urlApi;
+        }
+
+        public void setUrlApi(String urlApi) {
+            this.urlApi = urlApi;
+        }
+
+        public String getUrlAutorizacion() {
+            return urlAutorizacion;
+        }
+
+        public void setUrlAutorizacion(String urlAutorizacion) {
+            this.urlAutorizacion = urlAutorizacion;
         }
     }
 

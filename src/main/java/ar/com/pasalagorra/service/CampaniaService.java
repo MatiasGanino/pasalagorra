@@ -15,6 +15,8 @@ import ar.com.pasalagorra.service.dto.CampaniaDTO;
 import ar.com.pasalagorra.service.dto.CampaniaFormDTO;
 import ar.com.pasalagorra.service.dto.CampaniaPublicaDTO;
 import ar.com.pasalagorra.service.dto.CampaniaResumenDTO;
+import ar.com.pasalagorra.service.pagos.PasarelaPago;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -56,6 +58,8 @@ public class CampaniaService {
 
     private final ApplicationProperties applicationProperties;
 
+    private final PasarelaPago pasarelaPago;
+
     private final AuditoriaService auditoriaService;
 
     public CampaniaService(
@@ -65,6 +69,7 @@ public class CampaniaService {
         RecaudacionService recaudacionService,
         MailService mailService,
         ApplicationProperties applicationProperties,
+        PasarelaPago pasarelaPago,
         AuditoriaService auditoriaService
     ) {
         this.campaniaRepository = campaniaRepository;
@@ -73,6 +78,7 @@ public class CampaniaService {
         this.recaudacionService = recaudacionService;
         this.mailService = mailService;
         this.applicationProperties = applicationProperties;
+        this.pasarelaPago = pasarelaPago;
         this.auditoriaService = auditoriaService;
     }
 
@@ -149,6 +155,9 @@ public class CampaniaService {
         if (campania.getImagenes().isEmpty()) {
             throw new ReglaNegocioException("sinimagenes", "La campaña necesita al menos una imagen");
         }
+        if (!pasarelaPago.puedeCobrar(campania.getArtista())) {
+            throw new ReglaNegocioException("sinmercadopago", "Vinculá tu cuenta de Mercado Pago para poder cobrar");
+        }
         validarFechaCierre(campania.getFechaCierre());
         for (Recompensa recompensa : campania.getRecompensas()) {
             if (recompensa.getFechaEntregaEstimada().isBefore(campania.getFechaCierre())) {
@@ -179,6 +188,7 @@ public class CampaniaService {
         Campania campania = enRevision(id);
         validarFechaCierre(campania.getFechaCierre());
         campania.setEstado(EstadoCampania.PUBLICADA);
+        campania.setComisionPorcentaje(applicationProperties.getComisionPorcentaje());
         auditoriaService.registrar(CambioEstado.Entidad.CAMPANIA, id, EstadoCampania.EN_REVISION, EstadoCampania.PUBLICADA, null);
         campania.setFechaPublicacion(Instant.now());
         LOG.info("Campaña publicada: {}", campania.getTitulo());
@@ -258,7 +268,7 @@ public class CampaniaService {
             artista.getNombreArtistico(),
             artista.getCiudad(),
             artista.getProvincia(),
-            applicationProperties.getComisionPorcentaje(),
+            comision(c),
             c
                 .getImagenes()
                 .stream()
@@ -266,6 +276,13 @@ public class CampaniaService {
                 .toList(),
             c.getRecompensas().stream().map(CampaniaDTO.RecompensaDTO::de).toList()
         );
+    }
+
+    /**
+     * La comisión de la campaña; la configurada hoy si todavía no se publicó.
+     */
+    private BigDecimal comision(Campania c) {
+        return c.getComisionPorcentaje() != null ? c.getComisionPorcentaje() : applicationProperties.getComisionPorcentaje();
     }
 
     // ===================== Reglas =====================

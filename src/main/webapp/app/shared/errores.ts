@@ -38,6 +38,10 @@ const ERRORES: Partial<Record<string, string>> = {
   'error.reclamoabierto': 'Ya tenés un reclamo abierto sobre este aporte.',
   'error.respuestarequerida': 'Escribí la respuesta para el fan.',
   'error.yaresuelto': 'El reclamo ya está resuelto.',
+  // Mercado Pago (etapa 6)
+  'error.sinmercadopago': 'Para cobrar, el artista tiene que vincular su cuenta de Mercado Pago.',
+  'error.vinculacionvencida': 'El link para vincular Mercado Pago venció. Probá de nuevo desde Mis campañas.',
+  'error.mercadopagoapagado': 'Mercado Pago no está activo en este entorno.',
   // Arrepentimiento (RNF-12)
   'error.noarrepentible': 'Solo se puede revocar un aporte confirmado dentro de los 10 días del pago.',
   'error.noreembolsable': 'Solo se reembolsa un aporte confirmado, desde un pedido de arrepentimiento.',

@@ -62,6 +62,12 @@ public class Campania implements Serializable {
     @Column(name = "fecha_publicacion")
     private Instant fechaPublicacion;
 
+    /**
+     * Comisión de la plataforma en porcentaje, fijada al publicar la campaña (RF-23).
+     */
+    @Column(name = "comision_porcentaje", precision = 5, scale = 2)
+    private BigDecimal comisionPorcentaje;
+
     @OneToMany(mappedBy = "campania", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("orden")
     private List<Recompensa> recompensas = new ArrayList<>();
@@ -172,6 +178,14 @@ public class Campania implements Serializable {
 
     public void setFechaPublicacion(Instant fechaPublicacion) {
         this.fechaPublicacion = fechaPublicacion;
+    }
+
+    public BigDecimal getComisionPorcentaje() {
+        return comisionPorcentaje;
+    }
+
+    public void setComisionPorcentaje(BigDecimal comisionPorcentaje) {
+        this.comisionPorcentaje = comisionPorcentaje;
     }
 
     public List<Recompensa> getRecompensas() {

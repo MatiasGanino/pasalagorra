@@ -1,6 +1,6 @@
 import { CurrencyPipe } from '@angular/common';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, inject, input, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { serverApiUrl } from 'app/config';
@@ -43,6 +43,29 @@ const COLORES = ['#5b3df5', '#ff5a36', '#ffd166', '#0f9d58', '#b23cd6'];
     .resultado-info {
       background: #1fa7c9;
     }
+    .carga-pago {
+      display: inline-flex;
+      align-items: flex-end;
+      gap: 5px;
+      height: 36px;
+    }
+    .carga-pago span {
+      width: 7px;
+      height: 100%;
+      border-radius: 4px;
+      background: linear-gradient(#5b3df5, #ff5a36);
+      transform-origin: bottom;
+      animation: ecualizar 0.9s ease-in-out infinite alternate;
+    }
+    .carga-pago span:nth-child(2) {
+      animation-delay: -0.3s;
+    }
+    .carga-pago span:nth-child(3) {
+      animation-delay: -0.6s;
+    }
+    .carga-pago span:nth-child(4) {
+      animation-delay: -0.15s;
+    }
     .festejo {
       position: absolute;
       top: 5rem;
@@ -77,7 +100,14 @@ const COLORES = ['#5b3df5', '#ff5a36', '#ffd166', '#0f9d58', '#b23cd6'];
   template: `
     <div class="tarjeta-acceso text-center">
       @if (aporte(); as a) {
-        @if (a.estado === 'PENDIENTE') {
+        @if (a.estado === 'PENDIENTE' && !simulado()) {
+          <div class="carga-pago mb-3" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+          <h1 class="h4">Estamos confirmando tu pago</h1>
+          <p class="text-body-secondary mb-0">
+            Mercado Pago nos avisa en unos segundos. Si pagaste en efectivo o con transferencia, puede tardar más: te mandamos el
+            comprobante por mail cuando se acredite.
+          </p>
+        } @else if (a.estado === 'PENDIENTE') {
           <span class="chip chip-primario mb-3">Pago simulado · acá va Mercado Pago</span>
           <p class="text-body-secondary mb-1">Vas a aportar a</p>
           <h1 class="h4 mb-1">{{ a.campaniaTitulo }}</h1>
@@ -107,7 +137,7 @@ const COLORES = ['#5b3df5', '#ff5a36', '#ffd166', '#0f9d58', '#b23cd6'];
           <h1 class="h3">Te devolvimos el aporte</h1>
           <p class="text-body-secondary">La recompensa se agotó o la campaña cerró antes de que se acreditara el pago.</p>
         }
-        @if (a.estado !== 'PENDIENTE') {
+        @if (a.estado !== 'PENDIENTE' || !simulado()) {
           <div class="d-flex flex-wrap justify-content-center gap-2 mt-4">
             <a class="btn btn-primary" [routerLink]="['/campania', a.campaniaSlug]">Volver a la campaña</a>
             <a class="btn btn-outline-dark" routerLink="/account/aportes">Mis aportes</a>
@@ -120,8 +150,10 @@ const COLORES = ['#5b3df5', '#ff5a36', '#ffd166', '#0f9d58', '#b23cd6'];
     </div>
   `,
 })
-export default class PagoSimulado implements OnInit {
+export default class PagoSimulado implements OnInit, OnDestroy {
   readonly referencia = input.required<string>();
+  /** En la vuelta de Mercado Pago ({@code /pago/:referencia}) no hay botones: se espera la notificación. */
+  readonly simulado = input(true);
   readonly aporte = signal<Aporte | null>(null);
   readonly ocupado = signal(false);
   readonly error = signal<string | null>(null);
@@ -138,12 +170,15 @@ export default class PagoSimulado implements OnInit {
   });
 
   private readonly http = inject(HttpClient);
+  private consultas = 0;
+  private temporizador?: ReturnType<typeof setTimeout>;
 
   ngOnInit(): void {
-    this.http.get<Aporte>(this.url()).subscribe({
-      next: aporte => this.aporte.set(aporte),
-      error: (error: HttpErrorResponse) => this.error.set(mensajeDeError(error)),
-    });
+    this.consultar();
+  }
+
+  ngOnDestroy(): void {
+    clearTimeout(this.temporizador);
   }
 
   pagar(aprobado: boolean): void {
@@ -157,6 +192,21 @@ export default class PagoSimulado implements OnInit {
         this.error.set(mensajeDeError(error));
         this.ocupado.set(false);
       },
+    });
+  }
+
+  /**
+   * Trae el aporte; si viene de Mercado Pago y sigue pendiente, vuelve a preguntar cada 3 segundos (hasta 2 minutos).
+   */
+  private consultar(): void {
+    this.http.get<Aporte>(this.url()).subscribe({
+      next: aporte => {
+        this.aporte.set(aporte);
+        if (!this.simulado() && aporte.estado === 'PENDIENTE' && ++this.consultas < 40) {
+          this.temporizador = setTimeout(() => this.consultar(), 3000);
+        }
+      },
+      error: (error: HttpErrorResponse) => this.error.set(mensajeDeError(error)),
     });
   }
 
