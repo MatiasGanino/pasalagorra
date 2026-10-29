@@ -1,0 +1,98 @@
+@if (noExiste()) {
+  <div class="alert alert-warning">La campaña no existe o todavía no está publicada.</div>
+}
+
+@if (campania(); as c) {
+  <div class="row">
+    <div class="col-lg-8">
+      <h1 class="h2 mb-1">{{ c.titulo }}</h1>
+      <p class="text-muted">
+        de <strong>{{ c.nombreArtistico }}</strong> · {{ c.ciudad }}, {{ c.provincia }}
+        @if (c.estado !== 'PUBLICADA') {
+          <span class="badge {{ estados[c.estado].clase }} ms-2">{{ estados[c.estado].texto }}</span>
+        }
+      </p>
+
+      @if (c.imagenes.length > 0) {
+        <img [src]="c.imagenes[imagenActual()]" class="img-fluid rounded w-100 mb-2 portada" [alt]="c.titulo" />
+        @if (c.imagenes.length > 1) {
+          <div class="d-flex gap-2 mb-3 flex-wrap">
+            @for (imagen of c.imagenes; track imagen; let i = $index) {
+              <button type="button" class="btn p-0 border-0" (click)="imagenActual.set(i)">
+                <img [src]="imagen" class="rounded miniatura" [class.opacity-50]="i !== imagenActual()" alt="Imagen {{ i + 1 }}" />
+              </button>
+            }
+          </div>
+        }
+      }
+
+      <div class="d-lg-none mb-4">
+        <jhi-progreso
+          [recaudado]="c.recaudado"
+          [meta]="c.meta"
+          [porcentaje]="c.porcentaje"
+          [diasRestantes]="c.diasRestantes"
+          [estado]="c.estado"
+        />
+        <p class="small text-muted mt-1">{{ c.aportantes }} aportantes</p>
+      </div>
+
+      @if (video) {
+        <div class="ratio ratio-16x9 mb-4">
+          <iframe [src]="video" title="Video de la campaña" allowfullscreen></iframe>
+        </div>
+      }
+
+      <h2 class="h4">Sobre el proyecto</h2>
+      <p class="descripcion">{{ c.descripcion }}</p>
+
+      <div class="alert alert-light border small mt-4">
+        <strong>Todo o nada:</strong> si la campaña no llega a la meta el {{ c.fechaCierre | date: 'dd/MM/yyyy' }}, se te devuelve el aporte
+        completo. Un aporte no es una inversión: es un apoyo al artista a cambio de una recompensa, que puede demorarse. La plataforma cobra
+        una comisión del {{ c.comisionPorcentaje }}% sobre lo recaudado.
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="d-none d-lg-block mb-4">
+        <jhi-progreso
+          [recaudado]="c.recaudado"
+          [meta]="c.meta"
+          [porcentaje]="c.porcentaje"
+          [diasRestantes]="c.diasRestantes"
+          [estado]="c.estado"
+        />
+        <p class="small text-muted mt-1">{{ c.aportantes }} aportantes</p>
+      </div>
+
+      <h2 class="h4">Recompensas</h2>
+      @for (recompensa of c.recompensas; track recompensa.id) {
+        <div class="card mb-3" [class.opacity-50]="recompensa.disponibles === 0">
+          <div class="card-body">
+            <h3 class="h6 mb-1">{{ recompensa.titulo }}</h3>
+            <p class="mb-2">
+              <strong>{{ recompensa.montoMinimo | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</strong> o más
+            </p>
+            <p class="small descripcion">{{ recompensa.descripcion }}</p>
+            <p class="small text-muted mb-0">
+              Entrega estimada: {{ recompensa.fechaEntregaEstimada | date: 'MMMM yyyy' }}
+              @if (recompensa.requiereEnvio) {
+                · con envío
+              }
+              @if (recompensa.disponibles !== null) {
+                <br />
+                @if (recompensa.disponibles === 0) {
+                  <strong>Agotada</strong>
+                } @else {
+                  Quedan {{ recompensa.disponibles }} de {{ recompensa.stock }}
+                }
+              }
+            </p>
+          </div>
+        </div>
+      } @empty {
+        <p class="text-muted">Esta campaña no tiene recompensas: podés hacer un aporte libre.</p>
+      }
+    </div>
+  </div>
+}

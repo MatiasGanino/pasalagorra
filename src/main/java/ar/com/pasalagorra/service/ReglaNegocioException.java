@@ -3,16 +3,17 @@ package ar.com.pasalagorra.service;
 import java.io.Serial;
 
 /**
- * Una solicitud de artista que no se puede guardar o revisar. {@code clave} identifica el motivo para el frontend.
+ * Una operación que viola una regla de negocio. Se responde con 400 y {@code "message": "error.<clave>"}; el frontend
+ * traduce la clave a un texto.
  */
-public class SolicitudArtistaInvalidaException extends RuntimeException {
+public class ReglaNegocioException extends RuntimeException {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     private final String clave;
 
-    public SolicitudArtistaInvalidaException(String clave, String mensaje) {
+    public ReglaNegocioException(String clave, String mensaje) {
         super(mensaje);
         this.clave = clave;
     }

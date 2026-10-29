@@ -151,3 +151,6 @@ Desktop.ini
 ######################
 coverage/
 .nyc_output/
+
+# Imágenes subidas en desarrollo
+/data/

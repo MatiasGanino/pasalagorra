@@ -55,7 +55,7 @@ export const appConfig: ApplicationConfig = {
     provideServiceWorker('ngsw-worker.js', { enabled: false }),
     provideHttpClient(withInterceptors([authInterceptor, authExpiredInterceptor, errorHandlerInterceptor, notificationInterceptor])),
     Title,
-    { provide: LOCALE_ID, useValue: 'es' },
+    { provide: LOCALE_ID, useValue: 'es-AR' },
     { provide: NgbDateAdapter, useClass: NgbDateDayjsAdapter },
     { provide: TitleStrategy, useClass: AppPageTitleStrategy },
   ],

@@ -5,7 +5,8 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
 import { serverApiUrl } from 'app/config';
-import { Artista, ESTADOS_ARTISTA, mensajeDeError } from 'app/artista/artista.model';
+import { Artista, ESTADOS_ARTISTA } from 'app/artista/artista.model';
+import { mensajeDeError } from 'app/shared/errores';
 
 @Component({
   selector: 'jhi-revision-artista',

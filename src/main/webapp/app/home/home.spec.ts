@@ -1,44 +1,44 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { provideHttpClient } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Router } from '@angular/router';
-
-import { provideTranslateService } from '@ngx-translate/core';
-
-import { AccountService } from 'app/core/auth';
+import { provideRouter } from '@angular/router';
 
 import Home from './home';
 
 describe('Home Component', () => {
-  let comp: Home;
   let fixture: ComponentFixture<Home>;
-  let mockRouter: Router;
+  let httpMock: HttpTestingController;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [
-        provideTranslateService(),
-        {
-          provide: AccountService,
-        },
-      ],
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
     });
-  });
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(Home);
-    comp = fixture.componentInstance;
-
-    mockRouter = TestBed.inject(Router);
-    vi.spyOn(mockRouter, 'navigate');
+    httpMock = TestBed.inject(HttpTestingController);
   });
 
-  describe('login', () => {
-    it('should navigate to /login on login', () => {
-      // WHEN
-      comp.login();
+  it('muestra las campañas publicadas', () => {
+    fixture.detectChanges();
 
-      // THEN
-      expect(mockRouter.navigate).toHaveBeenCalledWith(['/login']);
-    });
+    httpMock.expectOne('api/public/campanias').flush([
+      {
+        id: 1,
+        slug: 'disco-nuevo',
+        titulo: 'Disco nuevo',
+        nombreArtistico: 'Los Pasalagorra',
+        portada: null,
+        meta: 500000,
+        recaudado: 250000,
+        porcentaje: 50,
+        diasRestantes: 10,
+        estado: 'PUBLICADA',
+      },
+    ]);
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.campanias()).toHaveLength(1);
+    expect(fixture.nativeElement.textContent).toContain('Disco nuevo');
+    expect(fixture.nativeElement.textContent).toContain('Quedan 10 días');
   });
 });

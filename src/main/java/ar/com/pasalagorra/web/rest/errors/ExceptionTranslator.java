@@ -97,6 +97,10 @@ public class ExceptionTranslator extends ResponseEntityExceptionHandler {
         if (
             ex instanceof ar.com.pasalagorra.service.InvalidPasswordException
         ) return (ProblemDetailWithCause) new InvalidPasswordException().getBody();
+        // Reglas de negocio: 400 con "message": "error.<clave>", que el frontend traduce a un texto
+        if (
+            ex instanceof ar.com.pasalagorra.service.ReglaNegocioException regla
+        ) return (ProblemDetailWithCause) new BadRequestAlertException(regla.getMessage(), "pasalagorra", regla.getClave()).getBody();
 
         if (
             ex instanceof ErrorResponseException exp && exp.getBody() instanceof ProblemDetailWithCause problemDetailWithCause

@@ -1,21 +1,26 @@
-import { Component, inject } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { Component, OnInit, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
-import { AccountService } from 'app/core/auth';
-import { TranslateDirective } from 'app/shared/language';
+import { CampaniaResumen } from 'app/campania/campania.model';
+import Progreso from 'app/campania/progreso/progreso';
+import { serverApiUrl } from 'app/config';
 
+/**
+ * Inicio: las campañas publicadas, primero las que cierran antes, y las exitosas.
+ */
 @Component({
   selector: 'jhi-home',
   templateUrl: './home.html',
   styleUrl: './home.scss',
-  imports: [TranslateDirective, RouterLink],
+  imports: [RouterLink, Progreso],
 })
-export default class Home {
-  public readonly account = inject(AccountService).account;
+export default class Home implements OnInit {
+  readonly campanias = signal<CampaniaResumen[] | null>(null);
 
-  private readonly router = inject(Router);
+  private readonly http = inject(HttpClient);
 
-  login(): void {
-    this.router.navigate(['/login']);
+  ngOnInit(): void {
+    this.http.get<CampaniaResumen[]>(`${serverApiUrl}api/public/campanias`).subscribe(campanias => this.campanias.set(campanias));
   }
 }

@@ -89,7 +89,9 @@ jhipster:
 # https://www.jhipster.tech/common-application-properties/
 # ===================================================================
 
-# application:
+application:
+  imagenes:
+    directorio: target/test-imagenes
 management:
   health:
     mail:

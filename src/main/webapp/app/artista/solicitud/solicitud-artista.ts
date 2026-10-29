@@ -5,7 +5,9 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { serverApiUrl } from 'app/config';
 import { PROVINCIAS } from 'app/shared/provincias';
 
-import { Artista, ESTADOS_ARTISTA, mensajeDeError } from '../artista.model';
+import { mensajeDeError } from 'app/shared/errores';
+
+import { Artista, ESTADOS_ARTISTA } from '../artista.model';
 
 @Component({
   selector: 'jhi-solicitud-artista',

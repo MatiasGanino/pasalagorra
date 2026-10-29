@@ -1,0 +1,149 @@
+<div class="d-flex justify-content-center">
+  <div class="col-lg-9">
+    @let actual = campania();
+    <h2>{{ actual ? actual.titulo : 'Nueva campaña' }}</h2>
+
+    @if (actual) {
+      <p>
+        <span class="badge {{ estados[actual.estado].clase }}">{{ estados[actual.estado].texto }}</span>
+        @if (actual.estado !== 'BORRADOR' && actual.estado !== 'EN_REVISION') {
+          <a class="ms-2" [routerLink]="['/campania', actual.slug]">Ver la página pública</a>
+        }
+      </p>
+      @if (actual.motivoRechazo) {
+        <div class="alert alert-danger"><strong>Cambios pedidos por la revisión:</strong> {{ actual.motivoRechazo }}</div>
+      }
+      @if (actual.estado === 'EN_REVISION') {
+        <div class="alert alert-info">La campaña está en revisión. Te avisamos por mail cuando esté publicada.</div>
+      }
+    }
+
+    @if (mensaje(); as texto) {
+      <div class="alert alert-success">{{ texto }}</div>
+    }
+    @if (error(); as texto) {
+      <div class="alert alert-danger">{{ texto }}</div>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+      <div class="mb-3">
+        <label class="form-label" for="titulo">Título</label>
+        <input type="text" class="form-control" id="titulo" formControlName="titulo" />
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label" for="descripcion">Descripción</label>
+        <textarea class="form-control" id="descripcion" rows="8" formControlName="descripcion"></textarea>
+        <small class="form-text text-muted">Contá el proyecto: qué vas a hacer con lo recaudado y por qué te tienen que bancar.</small>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label" for="videoUrl">Video de YouTube <small class="text-muted">(opcional)</small></label>
+        <input type="url" class="form-control" id="videoUrl" formControlName="videoUrl" placeholder="https://www.youtube.com/watch?v=..." />
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label class="form-label" for="meta">Meta en pesos</label>
+          <input type="number" class="form-control" id="meta" min="1000" step="1000" formControlName="meta" />
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="form-label" for="fechaCierre">Fecha de cierre</label>
+          <input type="date" class="form-control" id="fechaCierre" formControlName="fechaCierre" />
+          <small class="form-text text-muted"
+            >Como máximo 60 días desde que se publica. Todo o nada: si no se llega a la meta, se reembolsa a todos.</small
+          >
+        </div>
+      </div>
+
+      <h3 class="h5 mt-4">Recompensas</h3>
+      <div formArrayName="recompensas">
+        @for (recompensa of form.controls.recompensas.controls; track recompensa; let i = $index) {
+          <div class="card mb-3" [formGroupName]="i">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-8 mb-2">
+                  <label class="form-label" for="r-titulo-{{ i }}">Título</label>
+                  <input type="text" class="form-control" id="r-titulo-{{ i }}" formControlName="titulo" />
+                </div>
+                <div class="col-md-4 mb-2">
+                  <label class="form-label" for="r-monto-{{ i }}">Aporte mínimo ($)</label>
+                  <input type="number" class="form-control" id="r-monto-{{ i }}" min="100" formControlName="montoMinimo" />
+                </div>
+              </div>
+              <div class="mb-2">
+                <label class="form-label" for="r-descripcion-{{ i }}">Qué recibe el fan</label>
+                <textarea class="form-control" id="r-descripcion-{{ i }}" rows="2" formControlName="descripcion"></textarea>
+              </div>
+              <div class="row align-items-end">
+                <div class="col-md-4 mb-2">
+                  <label class="form-label" for="r-stock-{{ i }}">Stock <small class="text-muted">(vacío: sin límite)</small></label>
+                  <input type="number" class="form-control" id="r-stock-{{ i }}" min="1" formControlName="stock" />
+                </div>
+                <div class="col-md-4 mb-2">
+                  <label class="form-label" for="r-entrega-{{ i }}">Entrega estimada</label>
+                  <input type="date" class="form-control" id="r-entrega-{{ i }}" formControlName="fechaEntregaEstimada" />
+                </div>
+                <div class="col-md-4 mb-2">
+                  <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="r-envio-{{ i }}" formControlName="requiereEnvio" />
+                    <label class="form-check-label" for="r-envio-{{ i }}">Requiere envío</label>
+                  </div>
+                </div>
+              </div>
+              @if (editable()) {
+                <button type="button" class="btn btn-sm btn-outline-danger" (click)="quitarRecompensa(i)">Quitar</button>
+              }
+            </div>
+          </div>
+        }
+      </div>
+      @if (editable()) {
+        <button type="button" class="btn btn-outline-secondary mb-4" (click)="agregarRecompensa()">Agregar recompensa</button>
+
+        <div>
+          <button type="submit" class="btn btn-primary" [disabled]="form.invalid || ocupado()">Guardar</button>
+        </div>
+      }
+    </form>
+
+    @if (actual) {
+      <h3 class="h5 mt-5">Imágenes</h3>
+      <p class="small text-muted">La primera es la portada. Hasta 6 imágenes JPG, PNG o WebP de 5 MB como máximo.</p>
+      <div class="d-flex gap-3 flex-wrap mb-3">
+        @for (imagen of actual.imagenes; track imagen.id) {
+          <div class="text-center">
+            <img [src]="imagen.url" class="rounded d-block mb-1 imagen-editor" alt="Imagen de la campaña" />
+            @if (editable()) {
+              <button type="button" class="btn btn-sm btn-link text-danger" (click)="borrarImagen(imagen.id)">Borrar</button>
+            }
+          </div>
+        }
+      </div>
+      @if (editable() && actual.imagenes.length < 6) {
+        <input
+          type="file"
+          class="form-control mb-4"
+          accept="image/jpeg,image/png,image/webp"
+          (change)="subirImagen($event)"
+          [disabled]="ocupado()"
+        />
+      }
+
+      @if (editable()) {
+        <hr />
+        <p class="small text-muted">Cuando esté lista, enviala a revisión. Mientras se revisa no se puede modificar.</p>
+        <button type="button" class="btn btn-success" (click)="enviarARevision()" [disabled]="ocupado() || form.dirty">
+          Enviar a revisión
+        </button>
+        @if (form.dirty) {
+          <small class="ms-2 text-muted">Guardá los cambios antes de enviarla.</small>
+        }
+      }
+    } @else {
+      <p class="small text-muted mt-3">Guardá la campaña para poder subir las imágenes.</p>
+    }
+
+    <p class="mt-4"><a routerLink="/artista/campanias">← Mis campañas</a></p>
+  </div>
+</div>

@@ -207,7 +207,7 @@ jhipster:
     license: unlicensed
     license-url:
   security:
-    content-security-policy: "default-src 'self'; frame-src 'self' data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://storage.googleapis.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:"
+    content-security-policy: "default-src 'self'; frame-src 'self' data: https://www.youtube-nocookie.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://storage.googleapis.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:"
 
 
 # jhipster-needle-add-application-yaml-document
@@ -221,4 +221,15 @@ jhipster:
 # https://www.jhipster.tech/common-application-properties/
 # ===================================================================
 
-# application:
+application:
+  # Comisión de la plataforma sobre lo recaudado; se muestra en cada campaña
+  comision-porcentaje: 8
+  imagenes:
+    # Carpeta donde se guardan las imágenes de las campañas
+    directorio: ${IMAGENES_DIR:data/imagenes}
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 6MB

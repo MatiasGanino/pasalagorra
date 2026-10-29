@@ -2,10 +2,8 @@ package ar.com.pasalagorra.web.rest;
 
 import ar.com.pasalagorra.security.SecurityUtils;
 import ar.com.pasalagorra.service.ArtistaService;
-import ar.com.pasalagorra.service.SolicitudArtistaInvalidaException;
 import ar.com.pasalagorra.service.dto.ArtistaDTO;
 import ar.com.pasalagorra.service.dto.SolicitudArtistaDTO;
-import ar.com.pasalagorra.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,8 +14,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/artista/solicitud")
 public class ArtistaResource {
-
-    static final String ENTITY_NAME = "artista";
 
     private final ArtistaService artistaService;
 
@@ -41,11 +37,7 @@ public class ArtistaResource {
      */
     @PutMapping
     public ArtistaDTO solicitar(@Valid @RequestBody SolicitudArtistaDTO solicitud) {
-        try {
-            return artistaService.solicitar(loginActual(), solicitud);
-        } catch (SolicitudArtistaInvalidaException e) {
-            throw new BadRequestAlertException(e.getMessage(), ENTITY_NAME, e.getClave());
-        }
+        return artistaService.solicitar(loginActual(), solicitud);
     }
 
     private static String loginActual() {

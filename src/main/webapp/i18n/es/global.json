@@ -31,9 +31,12 @@
         "apidocs": "API",
         "database": "Base de datos",
         "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)",
-        "artistas": "Artistas"
+        "artistas": "Artistas",
+        "campanias": "Campañas"
       },
-      "language": "Idioma"
+      "language": "Idioma",
+      "campanias": "Mis campañas",
+      "campania": "Campaña"
     },
     "form": {
       "username.label": "Usuario",

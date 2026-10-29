@@ -234,3 +234,28 @@ angular-cli removes postcss-rtl processed inline css, processed rules must be ad
   }
 }
 /* jhipster-needle-scss-add-main JHipster will add new css style */
+
+/* ==========================================================================
+Campañas
+========================================================================== */
+.portada {
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+.miniatura {
+  width: 72px;
+  height: 48px;
+  object-fit: cover;
+}
+
+/* Textos que carga el artista: se respetan los saltos de línea */
+.descripcion {
+  white-space: pre-line;
+}
+
+.imagen-editor {
+  width: 160px;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}

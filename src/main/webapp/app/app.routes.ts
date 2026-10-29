@@ -29,6 +29,11 @@ const routes: Routes = [
     loadChildren: () => import('./account/account.route'),
   },
   {
+    path: 'campania/:slug',
+    loadComponent: () => import('./campania/detalle/campania-publica'),
+    title: 'global.menu.campania',
+  },
+  {
     path: 'artista',
     loadChildren: () => import('./artista/artista.routes'),
   },

@@ -57,19 +57,19 @@ public class ArtistaService {
         String dni = Cuit.soloDigitos(datos.dni());
         String cuit = Cuit.soloDigitos(datos.cuit());
         if (!Cuit.dniValido(dni)) {
-            throw new SolicitudArtistaInvalidaException("dniinvalido", "El DNI tiene que tener 7 u 8 dígitos");
+            throw new ReglaNegocioException("dniinvalido", "El DNI tiene que tener 7 u 8 dígitos");
         }
         if (!Cuit.valido(cuit)) {
-            throw new SolicitudArtistaInvalidaException("cuitinvalido", "El CUIT no es válido");
+            throw new ReglaNegocioException("cuitinvalido", "El CUIT no es válido");
         }
         if (!Cuit.contieneDni(cuit, dni)) {
-            throw new SolicitudArtistaInvalidaException("cuitnocoincide", "El CUIT no corresponde al DNI");
+            throw new ReglaNegocioException("cuitnocoincide", "El CUIT no corresponde al DNI");
         }
         if (artistaRepository.existsByDniAndUserLoginNot(dni, login)) {
-            throw new SolicitudArtistaInvalidaException("dniusado", "Ya hay un artista con ese DNI");
+            throw new ReglaNegocioException("dniusado", "Ya hay un artista con ese DNI");
         }
         if (artistaRepository.existsByCuitAndUserLoginNot(cuit, login)) {
-            throw new SolicitudArtistaInvalidaException("cuitusado", "Ya hay un artista con ese CUIT");
+            throw new ReglaNegocioException("cuitusado", "Ya hay un artista con ese CUIT");
         }
 
         Artista artista = artistaRepository.findOneByUserLogin(login).orElseGet(() -> {
@@ -78,7 +78,7 @@ public class ArtistaService {
             return nuevo;
         });
         if (artista.getEstado() == EstadoArtista.APROBADO) {
-            throw new SolicitudArtistaInvalidaException("yaaprobado", "La cuenta de artista ya está aprobada");
+            throw new ReglaNegocioException("yaaprobado", "La cuenta de artista ya está aprobada");
         }
         artista.setNombreArtistico(datos.nombreArtistico().trim());
         artista.setNombreCompleto(datos.nombreCompleto().trim());
@@ -116,7 +116,7 @@ public class ArtistaService {
 
     public ArtistaDTO rechazar(Long id, String motivo) {
         if (motivo == null || motivo.isBlank()) {
-            throw new SolicitudArtistaInvalidaException("motivorequerido", "Hay que indicar el motivo del rechazo");
+            throw new ReglaNegocioException("motivorequerido", "Hay que indicar el motivo del rechazo");
         }
         Artista artista = pendiente(id);
         artista.setEstado(EstadoArtista.RECHAZADO);
@@ -128,11 +128,9 @@ public class ArtistaService {
     }
 
     private Artista pendiente(Long id) {
-        Artista artista = artistaRepository
-            .findById(id)
-            .orElseThrow(() -> new SolicitudArtistaInvalidaException("noexiste", "La solicitud no existe"));
+        Artista artista = artistaRepository.findById(id).orElseThrow(() -> new ReglaNegocioException("noexiste", "La solicitud no existe"));
         if (artista.getEstado() != EstadoArtista.PENDIENTE) {
-            throw new SolicitudArtistaInvalidaException("nopendiente", "La solicitud ya fue revisada");
+            throw new ReglaNegocioException("nopendiente", "La solicitud ya fue revisada");
         }
         return artista;
     }

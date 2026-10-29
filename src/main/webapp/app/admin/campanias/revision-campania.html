@@ -1,0 +1,80 @@
+@if (campania(); as c) {
+  <h2>{{ c.titulo }}</h2>
+  <p>
+    <span class="badge {{ estados[c.estado].clase }}">{{ estados[c.estado].texto }}</span>
+    de <strong>{{ c.nombreArtistico }}</strong> ({{ c.artistaLogin }})
+    @if (c.estado !== 'BORRADOR' && c.estado !== 'EN_REVISION') {
+      · <a [routerLink]="['/campania', c.slug]">Ver la página pública</a>
+    }
+  </p>
+
+  @if (error(); as mensaje) {
+    <div class="alert alert-danger">{{ mensaje }}</div>
+  }
+
+  <div class="row">
+    <div class="col-lg-8">
+      <div class="d-flex gap-2 flex-wrap mb-3">
+        @for (imagen of c.imagenes; track imagen.id) {
+          <img [src]="imagen.url" class="rounded imagen-editor" alt="Imagen de la campaña" />
+        }
+      </div>
+
+      <dl class="row">
+        <dt class="col-sm-4">Meta</dt>
+        <dd class="col-sm-8">{{ c.meta | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</dd>
+        <dt class="col-sm-4">Cierre</dt>
+        <dd class="col-sm-8">{{ c.fechaCierre | date: 'dd/MM/yyyy' }}</dd>
+        <dt class="col-sm-4">Video</dt>
+        <dd class="col-sm-8">
+          @if (c.videoUrl) {
+            <a [href]="c.videoUrl" target="_blank" rel="noopener">{{ c.videoUrl }}</a>
+          } @else {
+            —
+          }
+        </dd>
+        @if (c.motivoRechazo) {
+          <dt class="col-sm-4">Último rechazo</dt>
+          <dd class="col-sm-8">{{ c.motivoRechazo }}</dd>
+        }
+      </dl>
+
+      <h3 class="h5">Descripción</h3>
+      <p class="descripcion">{{ c.descripcion }}</p>
+
+      <h3 class="h5">Recompensas</h3>
+      <ul>
+        @for (r of c.recompensas; track r.id) {
+          <li>
+            <strong>{{ r.titulo }}</strong> · {{ r.montoMinimo | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }} o más · entrega
+            {{ r.fechaEntregaEstimada | date: 'MM/yyyy' }}
+            @if (r.stock) {
+              · stock {{ r.stock }}
+            }
+            @if (r.requiereEnvio) {
+              · con envío
+            }
+            <br /><span class="small text-muted">{{ r.descripcion }}</span>
+          </li>
+        } @empty {
+          <li class="text-muted">Sin recompensas: solo aportes libres.</li>
+        }
+      </ul>
+    </div>
+
+    <div class="col-lg-4">
+      @if (c.estado === 'EN_REVISION') {
+        <p class="small text-muted">
+          Revisá que el contenido sea real y que las recompensas sean razonables para el artista. Los criterios de aprobación son públicos.
+        </p>
+        <button type="button" class="btn btn-success mb-4 w-100" (click)="aprobar()">Aprobar y publicar</button>
+
+        <label class="form-label" for="motivo">Cambios que hay que hacer</label>
+        <textarea class="form-control mb-2" id="motivo" rows="4" maxlength="500" [(ngModel)]="motivo"></textarea>
+        <button type="button" class="btn btn-danger w-100" [disabled]="!motivo.trim()" (click)="rechazar()">Devolver al artista</button>
+      }
+    </div>
+  </div>
+
+  <p class="mt-4"><a routerLink="/admin/campanias">← Volver a la lista</a></p>
+}

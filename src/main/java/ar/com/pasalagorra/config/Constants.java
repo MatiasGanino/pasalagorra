@@ -1,5 +1,7 @@
 package ar.com.pasalagorra.config;
 
+import java.time.ZoneId;
+
 /**
  * Application constants.
  */
@@ -10,6 +12,11 @@ public final class Constants {
 
     public static final String SYSTEM = "system";
     public static final String DEFAULT_LANGUAGE = "es";
+
+    /**
+     * Las fechas de cierre de las campañas son días calendario en hora argentina.
+     */
+    public static final ZoneId ZONA_ARGENTINA = ZoneId.of("America/Argentina/Buenos_Aires");
 
     private Constants() {}
 }

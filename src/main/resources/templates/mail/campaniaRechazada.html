@@ -1,0 +1,21 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}" lang="es">
+  <head>
+    <title th:text="#{email.campania.rechazada.title}">Campaña con cambios</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  </head>
+  <body>
+    <p th:text="#{email.activation.greeting(${user.login})}">Estimado/a</p>
+    <p>Revisamos tu campaña <strong th:text="${titulo}">título</strong> y antes de publicarla necesita estos cambios:</p>
+    <blockquote th:text="${motivo}">motivo</blockquote>
+    <p>La campaña volvió a borrador: corregila y enviala de nuevo a revisión desde tus campañas.</p>
+    <p>
+      <a th:with="url=(@{|${baseUrl}/artista/campanias|})" th:href="${url}" th:text="${url}">Mis campañas</a>
+    </p>
+    <p>
+      <span th:text="#{email.activation.text2}">Saludos,</span>
+      <br />
+      <em th:text="#{email.signature}">Equipo de pasalagorra.</em>
+    </p>
+  </body>
+</html>

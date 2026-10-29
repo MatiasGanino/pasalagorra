@@ -124,6 +124,29 @@ public class MailService {
     }
 
     /**
+     * RF-07: aviso al artista de que su campaña se publicó, o volvió a borrador con {@code motivoRechazo}.
+     */
+    @Async
+    public void sendRevisionCampaniaEmail(User user, String titulo, String slug, String motivoRechazo) {
+        LOG.debug("Sending campaign review email to '{}'", user.getEmail());
+        if (motivoRechazo == null) {
+            sendEmailFromTemplateSync(
+                user,
+                "mail/campaniaAprobada",
+                "email.campania.aprobada.title",
+                Map.of("titulo", titulo, "slug", slug)
+            );
+        } else {
+            sendEmailFromTemplateSync(
+                user,
+                "mail/campaniaRechazada",
+                "email.campania.rechazada.title",
+                Map.of("titulo", titulo, "motivo", motivoRechazo)
+            );
+        }
+    }
+
+    /**
      * RF-03: aviso al artista de que su alta se aprobó, o se rechazó con {@code motivoRechazo}.
      */
     @Async

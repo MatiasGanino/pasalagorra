@@ -1,5 +1,5 @@
 import { registerLocaleData } from '@angular/common';
-import locale from '@angular/common/locales/es';
+import locale from '@angular/common/locales/es-AR';
 import { Component, inject } from '@angular/core';
 
 import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
