@@ -107,11 +107,11 @@
   <form class="mb-4" (ngSubmit)="publicarNovedad()">
     <div class="mb-2">
       <label class="form-label" for="titulo">Título</label>
-      <input id="titulo" name="titulo" class="form-control" maxlength="150" required [(ngModel)]="titulo" />
+      <input id="titulo" name="titulo" class="form-control" maxlength="150" [(ngModel)]="titulo" />
     </div>
     <div class="mb-2">
       <label class="form-label" for="texto">Texto</label>
-      <textarea id="texto" name="texto" class="form-control" rows="4" maxlength="5000" required [(ngModel)]="texto"></textarea>
+      <textarea id="texto" name="texto" class="form-control" rows="4" maxlength="5000" [(ngModel)]="texto"></textarea>
     </div>
     <button type="submit" class="btn btn-primary" [disabled]="ocupado() || !titulo.trim() || !texto.trim()">Publicar novedad</button>
     <span class="small text-muted ms-2">Se muestra en la página de la campaña y les llega por mail a los que aportaron.</span>
