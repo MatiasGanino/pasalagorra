@@ -2,21 +2,21 @@
   "global": {
     "title": "Pasalagorra",
     "menu": {
-      "home": "Inicio",
+      "home": "Campañas",
       "jhipster-needle-menu-add-element": "JHipster will add additional menu entries here (do not translate!)",
       "entities": {
         "main": "Entidades",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)",
-        "adminAuthority": "Authority"
+        "adminAuthority": "Roles"
       },
       "account": {
         "main": "Cuenta",
         "settings": "Ajustes",
         "password": "Contraseña",
         "sessions": "Sesiones",
-        "login": "Iniciar sesión",
-        "logout": "Cerrar la sesión",
-        "register": "Crear una cuenta",
+        "login": "Ingresar",
+        "logout": "Cerrar sesión",
+        "register": "Crear cuenta",
         "direccionEnvio": "Dirección de envío",
         "artista": "Perfil de artista",
         "aportes": "Mis aportes"
@@ -37,7 +37,9 @@
         "reclamos": "Reclamos",
         "aportes": "Aportes",
         "reportes": "Recaudación",
-        "auditoria": "Auditoría"
+        "auditoria": "Auditoría",
+        "plataforma": "Plataforma",
+        "sistema": "Sistema"
       },
       "language": "Idioma",
       "campanias": "Mis campañas",
@@ -45,19 +47,20 @@
       "pago": "Pago",
       "panel": "Panel de la campaña",
       "terminos": "Términos y condiciones",
-      "arrepentimiento": "Botón de arrepentimiento"
+      "arrepentimiento": "Botón de arrepentimiento",
+      "crearCampania": "Creá tu campaña"
     },
     "form": {
       "username.label": "Usuario",
-      "username.placeholder": "Nombre de usuario",
+      "username.placeholder": "Tu nombre de usuario",
       "currentpassword.label": "Contraseña actual",
       "currentpassword.placeholder": "Contraseña actual",
       "newpassword.label": "Nueva contraseña",
-      "newpassword.placeholder": "Nueva contraseña",
-      "confirmpassword.label": "Confirmación de la nueva contraseña",
-      "confirmpassword.placeholder": "Confirmación de la nueva contraseña",
-      "email.label": "Correo electrónico",
-      "email.placeholder": "Su correo electrónico"
+      "newpassword.placeholder": "Al menos 4 caracteres",
+      "confirmpassword.label": "Repetí la contraseña",
+      "confirmpassword.placeholder": "Repetí la contraseña",
+      "email.label": "Email",
+      "email.placeholder": "tu@email.com"
     },
     "messages": {
       "info": {
@@ -67,30 +70,30 @@
           "suffix": ", puede intentar con las cuentas predeterminadas:<br/>- Administrador (usuario=\"admin\" y contraseña=\"admin\") <br/>- Usuario (usuario=\"user\" y contraseña=\"user\")."
         },
         "register": {
-          "noaccount": "¿Aún no tienes una cuenta?",
-          "link": "Crea una cuenta"
+          "noaccount": "¿Todavía no tenés cuenta?",
+          "link": "Creá una"
         }
       },
       "error": {
-        "dontmatch": "¡La contraseña y la confirmación de contraseña no coinciden!"
+        "dontmatch": "Las contraseñas no coinciden."
       },
       "validate": {
         "newpassword": {
-          "required": "Se requiere que ingrese una contraseña.",
-          "minlength": "Se requiere que su contraseña tenga por lo menos 4 caracteres",
-          "maxlength": "Su contraseña no puede tener más de 50 caracteres",
+          "required": "Ingresá una contraseña.",
+          "minlength": "La contraseña tiene que tener al menos 4 caracteres.",
+          "maxlength": "La contraseña no puede tener más de 50 caracteres.",
           "strength": "Seguridad de la contraseña:"
         },
         "confirmpassword": {
-          "required": "Se requiere que confirme la contraseña.",
-          "minlength": "Se requiere que su contraseña de confirmación tenga por lo menos 4 caracteres",
-          "maxlength": "Su contraseña de confirmación no puede tener más de 50 caracteres"
+          "required": "Repetí la contraseña.",
+          "minlength": "La contraseña tiene que tener al menos 4 caracteres.",
+          "maxlength": "La contraseña no puede tener más de 50 caracteres."
         },
         "email": {
-          "required": "Se requiere un correo electrónico.",
-          "invalid": "Su correo electrónico no es válido.",
-          "minlength": "Se requiere que su correo electrónico tenga por lo menos 5 caracteres",
-          "maxlength": "Su correo electrónico no puede tener más de 50 caracteres"
+          "required": "Ingresá tu email.",
+          "invalid": "Ese email no es válido.",
+          "minlength": "El email tiene que tener al menos 5 caracteres.",
+          "maxlength": "El email no puede tener más de 50 caracteres."
         }
       }
     },

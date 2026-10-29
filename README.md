@@ -35,6 +35,16 @@ Aplicación JHipster 9 (monolito): API REST en Spring Boot con JWT y el frontend
 - `specs/`: una especificación por requerimiento (`RF-xx.md`, `RNF-xx.md`), escrita antes de programarlo, y los
   pendientes (`PENDIENTES.md`).
 
+## Diseño
+
+- Colores, tipografías y formas: `src/main/webapp/content/scss/_bootstrap-variables.scss` (violeta para acciones, coral
+  "gorra" para acentos y degradés, tinta para textos). Títulos en Bricolage Grotesque e interfaz en Inter, autoalojadas
+  con `@fontsource-variable` porque la CSP solo permite fuentes del mismo origen.
+- Piezas compartidas en `content/scss/global.scss`: tarjeta de campaña, chips, paneles, línea de tiempo, esqueletos de
+  carga y la barra para aportar en el celular. El logo es el componente `jhi-marca` (también `favicon.svg`).
+- Animaciones: la directiva `jhiAparecer` hace aparecer los bloques al hacer scroll. Todas las animaciones se apagan si
+  el sistema pide reducir el movimiento.
+
 ## Desarrollo local
 
 Requisitos: Java 21, Node 24 y PostgreSQL. No se usa Docker.

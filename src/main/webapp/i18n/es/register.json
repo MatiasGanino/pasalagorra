@@ -1,23 +1,23 @@
 {
   "register": {
-    "title": "Registro",
+    "title": "Creá tu cuenta",
     "form": {
       "button": "Crear la cuenta"
     },
     "messages": {
       "validate": {
         "login": {
-          "required": "Su nombre de usuario es obligatorio.",
-          "minlength": "Su nombre de usuario debe tener al menos 1 caracter.",
-          "maxlength": "Su nombre de usuario no puede tener más de 50 caracteres.",
-          "pattern": "Su nombre de usuario no es válido."
+          "required": "Elegí un nombre de usuario.",
+          "minlength": "El usuario tiene que tener al menos 1 caracter.",
+          "maxlength": "El usuario no puede tener más de 50 caracteres.",
+          "pattern": "Usá solo letras, números y . _ - @"
         }
       },
-      "success": "<strong>¡Registro guardado!</strong> Por favor, revise su correo electrónico para confirmar.",
+      "success": "<strong>¡Listo!</strong> Te mandamos un email para activar la cuenta.",
       "error": {
-        "fail": "<strong>¡El registro ha fallado!</strong> Por favor, inténtelo de nuevo más tarde.",
-        "userexists": "<strong>¡El nombre de usuario ya está registrado!</strong> Por favor, escoja otro usuario.",
-        "emailexists": "<strong>¡El correo electrónico ya está en uso!</strong> Por favor, escoja otro email."
+        "fail": "<strong>No pudimos crear la cuenta.</strong> Probá de nuevo más tarde.",
+        "userexists": "<strong>Ese usuario ya existe.</strong> Elegí otro.",
+        "emailexists": "<strong>Ya hay una cuenta con ese email.</strong> Probá ingresar o recuperar la contraseña."
       }
     }
   }

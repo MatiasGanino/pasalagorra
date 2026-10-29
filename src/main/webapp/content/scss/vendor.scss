@@ -1,9 +1,9 @@
 /* after changing this file run 'npm run webapp:build' */
 
-/***************************
-put Sass variables here:
-eg $input-color: red;
-****************************/
+// Tipografías autoalojadas (la CSP solo permite fuentes del mismo origen)
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/bricolage-grotesque';
+
 // Override Bootstrap variables
 @import 'bootstrap-variables';
 // Import Bootstrap source files from node_modules

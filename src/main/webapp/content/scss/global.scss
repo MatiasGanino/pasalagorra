@@ -1,43 +1,100 @@
 @import 'bootstrap-variables';
 @import 'bootstrap/scss/functions';
 @import 'bootstrap/scss/variables';
+@import 'bootstrap/scss/variables-dark';
+@import 'bootstrap/scss/maps';
+@import 'bootstrap/scss/mixins';
 
 /* ==============================================================
-Bootstrap tweaks
+Base
 ===============================================================*/
 
-body,
+:root {
+  --pg-acento: #ff5a36;
+  --pg-tinta: #{$dark};
+  --pg-degrade: linear-gradient(120deg, #{$primary} 0%, #b23cd6 50%, #ff5a36 100%);
+  --pg-sombra: 0 1px 2px rgba(21, 18, 31, 0.04), 0 8px 24px -12px rgba(21, 18, 31, 0.18);
+  --pg-sombra-alta: 0 2px 4px rgba(21, 18, 31, 0.04), 0 24px 48px -20px rgba(21, 18, 31, 0.35);
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+}
+
+body {
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
 h1,
 h2,
 h3,
-h4 {
-  font-weight: 300;
+.display-1,
+.display-2,
+.display-3,
+.display-4,
+.display-5,
+.display-6 {
+  letter-spacing: -0.02em;
 }
 
-/* Increase contrast of links to get 100% on Lighthouse Accessibility Audit. Override this color if you want to change the link color, or use a Bootswatch theme */
-a {
-  color: #533f03;
-  font-weight: bold;
+::selection {
+  background: rgba($primary, 0.18);
 }
 
-/* override hover color for dropdown-item forced by bootstrap to all a:not([href]):not([tabindex]) elements in _reboot.scss */
-a:not([href]):not([tabindex]):hover.dropdown-item {
-  color: $dropdown-link-hover-color;
+:focus-visible {
+  outline: 3px solid rgba($primary, 0.45);
+  outline-offset: 2px;
 }
 
-/* override .dropdown-item.active background-color on hover */
-.dropdown-item.active:hover {
-  background-color: mix($dropdown-link-hover-bg, $dropdown-link-active-bg, 50%);
+.btn:focus-visible,
+.form-control:focus-visible,
+.form-select:focus-visible {
+  outline: none;
 }
 
-a:hover {
-  color: #533f03;
-  /* make sure browsers use the pointer cursor for anchors, even with no href */
-  cursor: pointer;
+.btn-primary {
+  box-shadow: 0 6px 16px -8px rgba($primary, 0.8);
 }
 
-.dropdown-item:hover {
-  color: $dropdown-link-hover-color;
+.btn {
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease,
+    color 0.15s ease;
+
+  &:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+}
+
+.card {
+  box-shadow: var(--pg-sombra);
+}
+
+.table {
+  --bs-table-bg: transparent;
+}
+
+.table > thead th {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: $body-secondary-color;
+  font-weight: 600;
+  border-bottom-width: 1px;
+}
+
+.dropdown-menu {
+  box-shadow: var(--pg-sombra-alta);
+  padding: 0.4rem;
+}
+
+.dropdown-item {
+  border-radius: 0.5rem;
 }
 
 /* ==========================================================================
@@ -54,23 +111,13 @@ Browser Upgrade Prompt
 Generic styles
 ========================================================================== */
 
-/* Error highlight on input fields */
-.ng-valid[required],
-.ng-valid.required {
-  border-left: 5px solid green;
-}
-
-.ng-invalid:not(form) {
-  border-left: 5px solid red;
+/* Error en los campos: solo después de que la persona los tocó */
+.form-control.ng-invalid.ng-touched,
+.form-select.ng-invalid.ng-touched {
+  border-color: $danger;
 }
 
 /* other generic styles */
-
-.jh-card {
-  padding: 1.5%;
-  margin-top: 20px;
-  border: none;
-}
 
 .error {
   color: white;
@@ -101,10 +148,6 @@ Generic styles
 .readonly {
   background-color: #eee;
   opacity: 1;
-}
-
-.footer {
-  border-top: 1px solid rgba(0, 0, 0, 0.125);
 }
 
 .hand,
@@ -208,10 +251,6 @@ ui bootstrap tweaks
   white-space: nowrap;
 }
 
-.dropdown-menu {
-  padding-left: 0;
-}
-
 /* ==========================================================================
 angular-cli removes postcss-rtl processed inline css, processed rules must be added here instead
 ========================================================================== */
@@ -225,14 +264,6 @@ angular-cli removes postcss-rtl processed inline css, processed rules must be ad
   transform: rotate(-45deg);
 }
 
-/* navbar.scss */
-.navbar {
-  ul.navbar-nav {
-    .nav-item {
-      margin-left: 0.5em;
-    }
-  }
-}
 /* jhipster-needle-scss-add-main JHipster will add new css style */
 
 /* ==========================================================================
@@ -258,4 +289,401 @@ Campañas
   width: 160px;
   aspect-ratio: 16 / 9;
   object-fit: cover;
+}
+
+/* ==========================================================================
+Estructura
+========================================================================== */
+.principal {
+  min-height: calc(100vh - 4.5rem);
+  padding-top: 2rem;
+  padding-bottom: 4rem;
+}
+
+/* Sale del container y ocupa todo el ancho de la ventana */
+.ancho-completo {
+  margin-inline: calc(50% - 50vw);
+}
+
+.encabezado-pagina {
+  margin-bottom: 1.75rem;
+
+  h1,
+  h2 {
+    margin-bottom: 0.25rem;
+  }
+
+  p {
+    color: $body-secondary-color;
+    margin-bottom: 0;
+  }
+}
+
+.texto-degrade {
+  background: var(--pg-degrade);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.eyebrow {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: $primary;
+}
+
+/* ==========================================================================
+Chips
+========================================================================== */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: 50rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  background: rgba($dark, 0.06);
+  color: $body-color;
+  white-space: nowrap;
+
+  &.chip-claro {
+    background: rgba(255, 255, 255, 0.92);
+    color: $dark;
+    backdrop-filter: blur(6px);
+  }
+
+  &.chip-exito {
+    background: rgba($success, 0.12);
+    color: darken($success, 8%);
+  }
+
+  &.chip-alerta {
+    background: rgba($warning, 0.2);
+    color: #8a5300;
+  }
+
+  &.chip-primario {
+    background: rgba($primary, 0.1);
+    color: $primary;
+  }
+}
+
+/* ==========================================================================
+Tarjeta de campaña
+========================================================================== */
+.tarjeta-campania {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  color: inherit;
+  background: #fff;
+  border: 1px solid $card-border-color;
+  border-radius: 1.25rem;
+  overflow: hidden;
+  box-shadow: var(--pg-sombra);
+  transition:
+    transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.3s ease;
+
+  &:hover,
+  &:focus-visible {
+    color: inherit;
+    text-decoration: none;
+    transform: translateY(-6px);
+    box-shadow: var(--pg-sombra-alta);
+
+    .tarjeta-imagen img {
+      transform: scale(1.06);
+    }
+
+    .tarjeta-titulo {
+      color: $primary;
+    }
+  }
+
+  .tarjeta-imagen {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background: var(--pg-degrade);
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    .chip {
+      position: absolute;
+      top: 0.85rem;
+      left: 0.85rem;
+    }
+  }
+
+  .tarjeta-cuerpo {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 1.15rem 1.25rem 1.3rem;
+  }
+
+  .tarjeta-titulo {
+    font-family: $headings-font-family;
+    font-weight: 700;
+    font-size: 1.2rem;
+    line-height: 1.2;
+    margin-bottom: 0.2rem;
+    transition: color 0.2s ease;
+  }
+}
+
+/* ==========================================================================
+Progreso
+========================================================================== */
+.progress-bar {
+  background-image: var(--pg-degrade);
+  border-radius: 50rem;
+  transform-origin: left center;
+  animation: llenar 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+
+  &.completa {
+    background-image: linear-gradient(120deg, #0f9d58, #3ccf7f);
+  }
+}
+
+@keyframes llenar {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+/* ==========================================================================
+Carga: esqueletos
+========================================================================== */
+.esqueleto {
+  background: linear-gradient(90deg, #eeeaf3 0%, #f8f6fa 50%, #eeeaf3 100%);
+  background-size: 200% 100%;
+  animation: brillo 1.4s ease-in-out infinite;
+  border-radius: 0.5rem;
+}
+
+@keyframes brillo {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* ==========================================================================
+Aparecer al hacer scroll (directiva jhiAparecer)
+========================================================================== */
+.aparecer {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.7s ease,
+    transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition-delay: var(--retraso, 0s);
+
+  &.visible {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ==========================================================================
+Ecualizador animado
+========================================================================== */
+.ecualizador {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 0.8em;
+
+  span {
+    width: 4px;
+    height: 100%;
+    border-radius: 2px;
+    background: currentColor;
+    animation: ecualizar 1s ease-in-out infinite alternate;
+    transform-origin: bottom;
+
+    &:nth-child(2) {
+      animation-delay: -0.4s;
+    }
+
+    &:nth-child(3) {
+      animation-delay: -0.7s;
+    }
+
+    &:nth-child(4) {
+      animation-delay: -0.2s;
+    }
+  }
+}
+
+@keyframes ecualizar {
+  0% {
+    transform: scaleY(0.25);
+  }
+  100% {
+    transform: scaleY(1);
+  }
+}
+
+/* ==========================================================================
+Bloques de contenido
+========================================================================== */
+.panel-suave {
+  background: #fff;
+  border: 1px solid $card-border-color;
+  border-radius: 1.25rem;
+  box-shadow: var(--pg-sombra);
+  padding: 1.5rem;
+}
+
+.dato-grande {
+  font-family: $headings-font-family;
+  font-weight: 800;
+  font-size: 2rem;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.linea-tiempo {
+  position: relative;
+  padding-left: 1.5rem;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0.35rem;
+    top: 0.4rem;
+    bottom: 0.4rem;
+    width: 2px;
+    background: linear-gradient($primary, rgba($primary, 0.1));
+  }
+
+  article {
+    position: relative;
+    margin-bottom: 1.5rem;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: -1.42rem;
+      top: 0.35rem;
+      width: 0.75rem;
+      height: 0.75rem;
+      border-radius: 50%;
+      background: #fff;
+      border: 3px solid $primary;
+    }
+  }
+}
+
+/* Formularios de ingreso */
+.tarjeta-acceso {
+  max-width: 460px;
+  margin: 1rem auto 0;
+  padding: 2.25rem;
+  background: #fff;
+  border: 1px solid $card-border-color;
+  border-radius: 1.5rem;
+  box-shadow: var(--pg-sombra-alta);
+
+  @include media-breakpoint-down(sm) {
+    padding: 1.5rem;
+  }
+}
+
+/* Barra para aportar, fija abajo en el celular */
+.barra-movil {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1020;
+  padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom));
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(14px);
+  border-top: 1px solid $card-border-color;
+  box-shadow: 0 -12px 30px -20px rgba($dark, 0.4);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .aparecer {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Sobre una foto los chips van con fondo lleno, para que se lean */
+.tarjeta-imagen .chip-exito {
+  background: $success;
+  color: #fff;
+}
+
+.tarjeta-imagen .chip-alerta {
+  background: $warning;
+  color: $dark;
+}
+
+.tarjeta-ancha {
+  max-width: 680px;
+}
+
+/* Las tablas van sobre un panel blanco, igual en todas las pantallas de gestión */
+.table-responsive {
+  background: #fff;
+  border: 1px solid $card-border-color;
+  border-radius: 1.25rem;
+  box-shadow: var(--pg-sombra);
+  padding: 0.25rem 0.75rem;
+
+  > .table {
+    margin-bottom: 0;
+  }
+
+  > .table > tbody > tr:last-child > * {
+    border-bottom: 0;
+  }
+}
+
+/* Indicadores del panel */
+.indicador {
+  height: 100%;
+  padding: 1.1rem 1.25rem;
+  background: #fff;
+  border: 1px solid $card-border-color;
+  border-radius: 1.25rem;
+  box-shadow: var(--pg-sombra);
+
+  .indicador-valor {
+    font-family: $headings-font-family;
+    font-weight: 800;
+    font-size: 1.6rem;
+    line-height: 1.1;
+  }
+
+  .indicador-nombre {
+    font-size: 0.82rem;
+    color: $body-secondary-color;
+  }
 }

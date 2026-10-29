@@ -35,6 +35,7 @@
             "assets": [
               "src/main/webapp/content",
               "src/main/webapp/favicon.ico",
+              "src/main/webapp/favicon.svg",
               "src/main/webapp/manifest.webapp",
               "src/main/webapp/robots.txt",
               "src/main/webapp/swagger-ui"
@@ -60,8 +61,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
+                  "maximumWarning": "4kb",
+                  "maximumError": "8kb"
                 }
               ]
             },

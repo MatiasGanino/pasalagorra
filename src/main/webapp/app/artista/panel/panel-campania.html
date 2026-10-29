@@ -15,13 +15,30 @@
     <div class="alert alert-success">{{ mensaje }}</div>
   }
 
-  <h3 class="h5">Resumen</h3>
-  <p>
-    <strong>{{ total() | currency: 'ARS' : 'symbol-narrow' : '1.0-2' }}</strong> en {{ aportes().length }} aportes confirmados.
-    @if (c.estado === 'EXITOSA') {
-      Marcá cada recompensa cuando la entregues: con la última, la campaña queda cerrada.
-    }
-  </p>
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-4">
+      <div class="indicador">
+        <div class="indicador-valor">{{ total() | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</div>
+        <div class="indicador-nombre">recaudado</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-4">
+      <div class="indicador">
+        <div class="indicador-valor">{{ aportes().length }}</div>
+        <div class="indicador-nombre">aportes confirmados</div>
+      </div>
+    </div>
+    <div class="col-12 col-md-4">
+      <div class="indicador">
+        <div class="indicador-valor">{{ entregadas() }} / {{ conRecompensa() }}</div>
+        <div class="indicador-nombre">recompensas entregadas</div>
+      </div>
+    </div>
+  </div>
+  @if (c.estado === 'EXITOSA') {
+    <div class="alert alert-light border">Marcá cada recompensa cuando la entregues: con la última, la campaña queda cerrada.</div>
+  }
+  <h3 class="h5">Por recompensa</h3>
   @if (resumen().length > 0) {
     <div class="table-responsive">
       <table class="table table-sm align-middle">
@@ -103,8 +120,8 @@
     </div>
   }
 
-  <h3 class="h5 mt-4">Novedades</h3>
-  <form class="mb-4" (ngSubmit)="publicarNovedad()">
+  <h3 class="h5 mt-5">Novedades</h3>
+  <form class="panel-suave mb-4" (ngSubmit)="publicarNovedad()">
     <div class="mb-2">
       <label class="form-label" for="titulo">Título</label>
       <input id="titulo" name="titulo" class="form-control" maxlength="150" [(ngModel)]="titulo" />
@@ -116,11 +133,13 @@
     <button type="submit" class="btn btn-primary" [disabled]="ocupado() || !titulo.trim() || !texto.trim()">Publicar novedad</button>
     <span class="small text-muted ms-2">Se muestra en la página de la campaña y les llega por mail a los que aportaron.</span>
   </form>
-  @for (novedad of novedades(); track novedad.id) {
-    <article class="border-start border-3 ps-3 mb-3">
-      <h4 class="h6 mb-0">{{ novedad.titulo }}</h4>
-      <p class="small text-muted mb-1">{{ novedad.fecha | date: 'dd/MM/yyyy HH:mm' }}</p>
-      <p class="descripcion mb-0">{{ novedad.texto }}</p>
-    </article>
-  }
+  <div class="linea-tiempo">
+    @for (novedad of novedades(); track novedad.id) {
+      <article>
+        <p class="small text-body-secondary mb-1">{{ novedad.fecha | date: 'dd/MM/yyyy HH:mm' }}</p>
+        <h4 class="h6 mb-1">{{ novedad.titulo }}</h4>
+        <p class="descripcion mb-0">{{ novedad.texto }}</p>
+      </article>
+    }
+  </div>
 }

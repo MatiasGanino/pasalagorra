@@ -1,81 +1,102 @@
 @if (noExiste()) {
-  <div class="alert alert-warning">La campaña no existe o todavía no está publicada.</div>
+  <div class="vacio-campania">
+    <h1 class="h3">No encontramos esta campaña</h1>
+    <p class="text-body-secondary">Puede que todavía no esté publicada o que el link esté mal.</p>
+    <a class="btn btn-primary" routerLink="/">Ver las campañas</a>
+  </div>
 }
 
 @if (campania(); as c) {
-  <div class="row">
-    <div class="col-lg-8">
-      <h1 class="h2 mb-1">{{ c.titulo }}</h1>
-      <p class="text-muted">
-        de <strong>{{ c.nombreArtistico }}</strong> · {{ c.ciudad }}, {{ c.provincia }}
-        @if (c.estado !== 'PUBLICADA') {
-          <span class="badge {{ estados[c.estado].clase }} ms-2">{{ estados[c.estado].texto }}</span>
-        }
-      </p>
+  <a class="volver" routerLink="/">← Todas las campañas</a>
 
-      @if (c.imagenes.length > 0) {
-        <img [src]="c.imagenes[imagenActual()]" class="img-fluid rounded w-100 mb-2 portada" [alt]="c.titulo" />
-        @if (c.imagenes.length > 1) {
-          <div class="d-flex gap-2 mb-3 flex-wrap">
-            @for (imagen of c.imagenes; track imagen; let i = $index) {
-              <button type="button" class="btn p-0 border-0" (click)="imagenActual.set(i)">
-                <img [src]="imagen" class="rounded miniatura" [class.opacity-50]="i !== imagenActual()" alt="Imagen {{ i + 1 }}" />
-              </button>
-            }
-          </div>
-        }
+  <header class="cabecera">
+    <div>
+      @if (c.estado !== 'PUBLICADA') {
+        <span class="chip {{ c.estado === 'EXITOSA' || c.estado === 'CERRADA' ? 'chip-exito' : 'chip-primario' }} mb-2">
+          {{ c.estado === 'EXITOSA' || c.estado === 'CERRADA' ? '✓ Llegó a la meta' : estados[c.estado].texto }}
+        </span>
       }
+      <h1 class="display-6 mb-1">{{ c.titulo }}</h1>
+      <p class="mb-0 text-body-secondary">
+        de <strong class="text-body">{{ c.nombreArtistico }}</strong> · {{ c.ciudad }}, {{ c.provincia }}
+      </p>
+    </div>
+    <button type="button" class="btn btn-outline-dark btn-sm compartir" (click)="compartir()">
+      {{ copiado() ? '¡Link copiado!' : 'Compartir' }}
+    </button>
+  </header>
 
-      <div class="d-lg-none mb-4">
-        <jhi-progreso
-          [recaudado]="c.recaudado"
-          [meta]="c.meta"
-          [porcentaje]="c.porcentaje"
-          [diasRestantes]="c.diasRestantes"
-          [estado]="c.estado"
-        />
-        <p class="small text-muted mt-1">{{ c.aportantes }} aportantes</p>
-      </div>
-
-      @if (video) {
-        <div class="ratio ratio-16x9 mb-4">
-          <iframe [src]="video" title="Video de la campaña" allowfullscreen></iframe>
+  <div class="row g-4 g-xl-5">
+    <div class="col-lg-8">
+      @if (c.imagenes.length > 0) {
+        <div class="galeria">
+          <img [src]="c.imagenes[imagenActual()]" class="galeria-principal" [alt]="c.titulo" />
+          @if (c.imagenes.length > 1) {
+            <div class="galeria-miniaturas">
+              @for (imagen of c.imagenes; track imagen; let i = $index) {
+                <button
+                  type="button"
+                  class="miniatura-boton"
+                  [class.activa]="i === imagenActual()"
+                  (click)="imagenActual.set(i)"
+                  [attr.aria-label]="'Ver imagen ' + (i + 1)"
+                >
+                  <img [src]="imagen" alt="" />
+                </button>
+              }
+            </div>
+          }
         </div>
       }
 
-      <h2 class="h4">Sobre el proyecto</h2>
-      <p class="descripcion">{{ c.descripcion }}</p>
+      <div class="d-lg-none mt-4">
+        <ng-container [ngTemplateOutlet]="resumen" />
+      </div>
 
-      @if (novedades().length > 0) {
-        <h2 class="h4 mt-4">Novedades</h2>
-        @for (novedad of novedades(); track novedad.id) {
-          <article class="border-start border-3 ps-3 mb-3">
-            <h3 class="h6 mb-0">{{ novedad.titulo }}</h3>
-            <p class="small text-muted mb-1">{{ novedad.fecha | date: 'dd/MM/yyyy' }}</p>
-            <p class="descripcion mb-0">{{ novedad.texto }}</p>
-          </article>
-        }
+      <section class="mt-5" jhiAparecer>
+        <h2 class="h3 mb-3">Sobre el proyecto</h2>
+        <p class="descripcion texto-campania">{{ c.descripcion }}</p>
+      </section>
+
+      @if (video) {
+        <section class="mt-4" jhiAparecer>
+          <div class="ratio ratio-16x9 video">
+            <iframe [src]="video" title="Video de la campaña" allowfullscreen></iframe>
+          </div>
+        </section>
       }
 
-      <div class="alert alert-light border small mt-4">
-        <strong>Todo o nada:</strong> si la campaña no llega a la meta el {{ c.fechaCierre | date: 'dd/MM/yyyy' }}, se te devuelve el aporte
-        completo. Un aporte no es una inversión: es un apoyo al artista a cambio de una recompensa, que puede demorarse. La plataforma cobra
-        una comisión del {{ c.comisionPorcentaje }}% sobre lo recaudado. Al aportar aceptás los
+      @if (novedades().length > 0) {
+        <section class="mt-5" jhiAparecer>
+          <h2 class="h3 mb-3">
+            Novedades <span class="chip chip-primario align-middle">{{ novedades().length }}</span>
+          </h2>
+          <div class="linea-tiempo">
+            @for (novedad of novedades(); track novedad.id) {
+              <article>
+                <p class="small text-body-secondary mb-1">{{ novedad.fecha | date: "d 'de' MMMM yyyy" }}</p>
+                <h3 class="h5 mb-1">{{ novedad.titulo }}</h3>
+                <p class="descripcion mb-0">{{ novedad.texto }}</p>
+              </article>
+            }
+          </div>
+        </section>
+      }
+
+      <div class="todo-o-nada mt-5" jhiAparecer>
+        <strong>Todo o nada.</strong> Si la campaña no llega a la meta el {{ c.fechaCierre | date: "d 'de' MMMM" }}, se te devuelve el
+        aporte completo. Un aporte no es una inversión: es un apoyo al artista a cambio de una recompensa, que puede demorarse. La
+        plataforma cobra una comisión del {{ c.comisionPorcentaje }}% sobre lo recaudado. Al aportar aceptás los
         <a routerLink="/terminos">términos y condiciones</a>.
       </div>
     </div>
 
-    <div class="col-lg-4">
+    <aside class="col-lg-4">
       <div class="d-none d-lg-block mb-4">
-        <jhi-progreso
-          [recaudado]="c.recaudado"
-          [meta]="c.meta"
-          [porcentaje]="c.porcentaje"
-          [diasRestantes]="c.diasRestantes"
-          [estado]="c.estado"
-        />
-        <p class="small text-muted mt-1">{{ c.aportantes }} aportantes</p>
+        <ng-container [ngTemplateOutlet]="resumen" />
       </div>
+
+      <h2 id="recompensas" class="h4 mb-3">{{ c.estado === 'PUBLICADA' ? 'Elegí tu recompensa' : 'Recompensas' }}</h2>
 
       @if (error(); as mensaje) {
         <div class="alert alert-danger">
@@ -86,66 +107,102 @@
         </div>
       }
 
-      <h2 class="h4">Recompensas</h2>
-      @for (recompensa of c.recompensas; track recompensa.id) {
-        <div class="card mb-3" [class.opacity-50]="recompensa.disponibles === 0">
-          <div class="card-body">
-            <h3 class="h6 mb-1">{{ recompensa.titulo }}</h3>
-            <p class="mb-2">
-              <strong>{{ recompensa.montoMinimo | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</strong> o más
-            </p>
-            <p class="small descripcion">{{ recompensa.descripcion }}</p>
-            <p class="small text-muted mb-0">
-              Entrega estimada: {{ recompensa.fechaEntregaEstimada | date: 'MMMM yyyy' }}
-              @if (recompensa.requiereEnvio) {
-                · con envío
-              }
-              @if (recompensa.disponibles !== null) {
-                <br />
-                @if (recompensa.disponibles === 0) {
-                  <strong>Agotada</strong>
-                } @else {
+      @for (recompensa of c.recompensas; track recompensa.id; let i = $index) {
+        <div class="recompensa" [class.agotada]="recompensa.disponibles === 0" [jhiAparecer]="i * 0.06 + 's'">
+          <div class="d-flex justify-content-between align-items-start gap-2 mb-1">
+            <h3 class="h6 mb-0">{{ recompensa.titulo }}</h3>
+            <span class="recompensa-monto">{{ recompensa.montoMinimo | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</span>
+          </div>
+          <p class="small descripcion text-body-secondary mb-2">{{ recompensa.descripcion }}</p>
+          <div class="d-flex flex-wrap gap-1 mb-1">
+            <span class="chip">Entrega {{ recompensa.fechaEntregaEstimada | date: 'MMM yyyy' }}</span>
+            @if (recompensa.requiereEnvio) {
+              <span class="chip">Con envío</span>
+            }
+            @if (recompensa.disponibles !== null) {
+              @if (recompensa.disponibles === 0) {
+                <span class="chip">Agotada</span>
+              } @else {
+                <span class="chip" [class.chip-alerta]="recompensa.disponibles <= 5">
                   Quedan {{ recompensa.disponibles }} de {{ recompensa.stock }}
-                }
+                </span>
               }
-            </p>
-            @if (c.estado === 'PUBLICADA' && recompensa.disponibles !== 0) {
-              <div class="input-group mt-3">
-                <span class="input-group-text">$</span>
-                <input
-                  #monto
-                  type="number"
-                  class="form-control"
-                  [min]="recompensa.montoMinimo"
-                  [value]="recompensa.montoMinimo"
-                  aria-label="Monto del aporte"
-                />
-                <button type="button" class="btn btn-primary" [disabled]="ocupado()" (click)="aportar(recompensa.id, monto.valueAsNumber)">
-                  Aportar
-                </button>
-              </div>
             }
           </div>
-        </div>
-      } @empty {
-        <p class="text-muted">Esta campaña no tiene recompensas: podés hacer un aporte libre.</p>
-      }
-
-      @if (c.estado === 'PUBLICADA') {
-        <div class="card mb-3">
-          <div class="card-body">
-            <h3 class="h6">Aporte libre</h3>
-            <p class="small mb-2">Bancá el proyecto con el monto que quieras, sin recompensa.</p>
-            <div class="input-group">
+          @if (c.estado === 'PUBLICADA' && recompensa.disponibles !== 0) {
+            <div class="input-group mt-3">
               <span class="input-group-text">$</span>
-              <input #libre type="number" class="form-control" min="100" value="1000" aria-label="Monto del aporte libre" />
-              <button type="button" class="btn btn-outline-primary" [disabled]="ocupado()" (click)="aportar(null, libre.valueAsNumber)">
+              <input
+                #monto
+                type="number"
+                class="form-control"
+                [min]="recompensa.montoMinimo"
+                [value]="recompensa.montoMinimo"
+                [attr.aria-label]="'Monto del aporte para ' + recompensa.titulo"
+              />
+              <button type="button" class="btn btn-primary" [disabled]="ocupado()" (click)="aportar(recompensa.id, monto.valueAsNumber)">
                 Aportar
               </button>
             </div>
+          }
+        </div>
+      } @empty {
+        <p class="text-body-secondary">Esta campaña no tiene recompensas: podés hacer un aporte libre.</p>
+      }
+
+      @if (c.estado === 'PUBLICADA') {
+        <div class="recompensa recompensa-libre">
+          <h3 class="h6 mb-1">Aporte libre</h3>
+          <p class="small text-body-secondary mb-2">Bancá el proyecto con el monto que quieras, sin recompensa.</p>
+          <div class="input-group">
+            <span class="input-group-text">$</span>
+            <input #libre type="number" class="form-control" min="100" value="1000" aria-label="Monto del aporte libre" />
+            <button type="button" class="btn btn-outline-primary" [disabled]="ocupado()" (click)="aportar(null, libre.valueAsNumber)">
+              Aportar
+            </button>
           </div>
         </div>
       }
-    </div>
+    </aside>
   </div>
+
+  @if (c.estado === 'PUBLICADA') {
+    <div class="barra-movil d-lg-none">
+      <div class="d-flex align-items-center gap-3">
+        <div class="flex-grow-1 small">
+          <strong class="d-block">{{ c.porcentaje }}% de la meta</strong>
+          <span class="text-body-secondary">{{ textoDias(c.estado, c.diasRestantes) }}</span>
+        </div>
+        <button type="button" class="btn btn-primary" (click)="irARecompensas()">Aportar</button>
+      </div>
+    </div>
+  }
+
+  <ng-template #resumen>
+    <div class="resumen panel-suave">
+      <div class="progress mb-3" role="progressbar" [attr.aria-valuenow]="c.porcentaje" aria-valuemin="0" aria-valuemax="100">
+        <div class="progress-bar" [class.completa]="c.porcentaje >= 100" [style.width.%]="c.porcentaje > 100 ? 100 : c.porcentaje"></div>
+      </div>
+      <div class="dato-grande">{{ c.recaudado | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</div>
+      <p class="text-body-secondary mb-3">aportados de una meta de {{ c.meta | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</p>
+      <div class="resumen-datos">
+        <div>
+          <strong>{{ c.porcentaje }}%</strong>
+          <span>de la meta</span>
+        </div>
+        <div>
+          <strong>{{ c.aportantes }}</strong>
+          <span>{{ c.aportantes === 1 ? 'aportante' : 'aportantes' }}</span>
+        </div>
+        <div>
+          <strong>{{ c.estado === 'PUBLICADA' ? c.diasRestantes : '—' }}</strong>
+          <span>{{ c.estado === 'PUBLICADA' ? (c.diasRestantes === 1 ? 'día' : 'días') : 'finalizada' }}</span>
+        </div>
+      </div>
+      @if (c.estado === 'PUBLICADA') {
+        <button type="button" class="btn btn-primary btn-lg w-100 mt-3" (click)="irARecompensas()">Bancar este proyecto</button>
+        <p class="small text-body-secondary text-center mt-2 mb-0">Cierra el {{ c.fechaCierre | date: "d 'de' MMMM" }} · todo o nada</p>
+      }
+    </div>
+  </ng-template>
 }

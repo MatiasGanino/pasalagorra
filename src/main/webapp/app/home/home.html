@@ -1,33 +1,136 @@
-<div class="mb-4">
-  <h1 class="h2">Bancá la música que querés escuchar</h1>
-  <p class="lead">Aportá a los proyectos de tus artistas y recibí el disco, entradas o experiencias a cambio.</p>
-</div>
-
-@if (campanias(); as campanias) {
-  <div class="row g-4">
-    @for (campania of campanias; track campania.id) {
-      <div class="col-sm-6 col-lg-4">
-        <a class="card h-100 text-reset text-decoration-none" [routerLink]="['/campania', campania.slug]">
-          @if (campania.portada) {
-            <img [src]="campania.portada" class="card-img-top tarjeta-portada" [alt]="campania.titulo" />
-          }
-          <div class="card-body d-flex flex-column">
-            <h2 class="h5 card-title mb-1">{{ campania.titulo }}</h2>
-            <p class="text-muted small">{{ campania.nombreArtistico }}</p>
-            <div class="mt-auto">
-              <jhi-progreso
-                [recaudado]="campania.recaudado"
-                [meta]="campania.meta"
-                [porcentaje]="campania.porcentaje"
-                [diasRestantes]="campania.diasRestantes"
-                [estado]="campania.estado"
-              />
+<section class="hero ancho-completo">
+  <div class="hero-fondo" aria-hidden="true">
+    <span class="mancha mancha-1"></span>
+    <span class="mancha mancha-2"></span>
+    <span class="mancha mancha-3"></span>
+  </div>
+  <div class="container-xl">
+    <div class="row align-items-center gy-5">
+      <div class="col-lg-6 hero-texto">
+        <span class="eyebrow mb-3">
+          <span class="ecualizador me-2" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+          Crowdfunding para la música
+        </span>
+        <h1 class="display-3 mb-3">Pasá la gorra <span class="texto-degrade d-block">a lo grande.</span></h1>
+        <p class="lead mb-4">
+          Bancá a los artistas que te gustan y llevate el disco, la entrada o una experiencia única. Si la campaña no llega a la meta, te
+          devolvemos todo.
+        </p>
+        <div class="d-flex flex-wrap gap-2">
+          <button type="button" class="btn btn-primary btn-lg" (click)="irACampanias()">Explorar campañas</button>
+          <a class="btn btn-outline-dark btn-lg" routerLink="/artista/solicitud">Creá tu campaña</a>
+        </div>
+        @if (enCurso().length > 0) {
+          <div class="hero-datos">
+            <div>
+              <strong>{{ enCurso().length }}</strong>
+              <span>{{ enCurso().length === 1 ? 'campaña en curso' : 'campañas en curso' }}</span>
+            </div>
+            <div>
+              <strong>{{ totalRecaudado() | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</strong>
+              <span>aportados por fans</span>
             </div>
           </div>
-        </a>
+        }
       </div>
-    } @empty {
-      <p class="text-muted">Todavía no hay campañas publicadas.</p>
+      @if (destacadas().length > 0) {
+        <div class="col-lg-6 d-none d-lg-block">
+          <div class="pila-portadas" aria-hidden="true">
+            @for (campania of destacadas(); track campania.id; let i = $index) {
+              <a class="portada-flotante portada-{{ i }}" [routerLink]="['/campania', campania.slug]" tabindex="-1">
+                <img [src]="campania.portada" alt="" />
+                <span class="portada-pie">
+                  <strong>{{ campania.titulo }}</strong>
+                  <span>{{ campania.porcentaje }}% de la meta</span>
+                </span>
+              </a>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<section class="como-funciona">
+  <div class="row g-3 g-lg-4">
+    @for (paso of pasos; track paso.titulo; let i = $index) {
+      <div class="col-md-4" [jhiAparecer]="i * 0.1 + 's'">
+        <div class="paso">
+          <span class="paso-numero">{{ i + 1 }}</span>
+          <h2 class="h5 mb-1">{{ paso.titulo }}</h2>
+          <p class="mb-0 text-body-secondary">{{ paso.texto }}</p>
+        </div>
+      </div>
     }
   </div>
-}
+</section>
+
+<section id="campanias" class="seccion-campanias">
+  <div class="d-flex justify-content-between align-items-end flex-wrap gap-2 mb-4">
+    <div>
+      <span class="eyebrow">En curso</span>
+      <h2 class="h1 mb-0">Campañas para bancar</h2>
+    </div>
+  </div>
+
+  @if (campanias() === null) {
+    <div class="row g-4">
+      @for (n of [1, 2, 3]; track n) {
+        <div class="col-sm-6 col-lg-4">
+          <div class="tarjeta-campania">
+            <div class="esqueleto" style="aspect-ratio: 16 / 10; border-radius: 0"></div>
+            <div class="tarjeta-cuerpo">
+              <div class="esqueleto mb-2" style="height: 1.3rem; width: 75%"></div>
+              <div class="esqueleto mb-4" style="height: 0.9rem; width: 40%"></div>
+              <div class="esqueleto" style="height: 0.6rem"></div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="row g-4">
+      @for (campania of enCurso(); track campania.id; let i = $index) {
+        <div class="col-sm-6 col-lg-4" [jhiAparecer]="(i % 3) * 0.08 + 's'">
+          <jhi-tarjeta-campania [campania]="campania" />
+        </div>
+      } @empty {
+        <div class="col-12">
+          <div class="vacio">
+            <span class="ecualizador fs-2 mb-3" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+            <h3 class="h4">Todavía no hay campañas en curso</h3>
+            <p class="text-body-secondary">¿Tenés un proyecto? Podés ser el primero en pasar la gorra.</p>
+            <a class="btn btn-primary" routerLink="/artista/solicitud">Creá tu campaña</a>
+          </div>
+        </div>
+      }
+    </div>
+
+    @if (logradas().length > 0) {
+      <div class="mt-5 pt-3">
+        <span class="eyebrow">Lo que ya logramos</span>
+        <h2 class="h1 mb-4">Campañas que llegaron a la meta</h2>
+        <div class="row g-4">
+          @for (campania of logradas(); track campania.id; let i = $index) {
+            <div class="col-sm-6 col-lg-4" [jhiAparecer]="(i % 3) * 0.08 + 's'">
+              <jhi-tarjeta-campania [campania]="campania" />
+            </div>
+          }
+        </div>
+      </div>
+    }
+  }
+</section>
+
+<section class="llamado ancho-completo" jhiAparecer>
+  <div class="container-xl">
+    <div class="llamado-caja">
+      <div>
+        <h2 class="h1 text-white mb-2">¿Tenés un disco, una gira o un video en mente?</h2>
+        <p class="mb-0">Armá tu campaña con recompensas para tus fans. Revisamos cada proyecto y te acompañamos hasta la entrega.</p>
+      </div>
+      <a class="btn btn-light btn-lg" routerLink="/artista/solicitud">Quiero crear una campaña</a>
+    </div>
+  </div>
+</section>

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -10,6 +10,7 @@ import { environment } from 'environments/environment';
 import { LANGUAGES } from 'app/config';
 import { AccountService, StateStorageService } from 'app/core/auth';
 import { ProfileService } from 'app/layouts/profiles/profile.service';
+import Marca from 'app/layouts/marca/marca';
 import { LoginService } from 'app/login/login.service';
 import { HasAnyAuthorityDirective } from 'app/shared/auth';
 import { FindLanguageFromKeyPipe, TranslateDirective } from 'app/shared/language';
@@ -32,7 +33,9 @@ import ActiveMenuDirective from './active-menu.directive';
     ActiveMenuDirective,
     FindLanguageFromKeyPipe,
     TranslateDirective,
+    Marca,
   ],
+  host: { '(window:scroll)': 'alScrollear()' },
 })
 export default class Navbar implements OnInit {
   readonly inProduction = signal(true);
@@ -41,6 +44,10 @@ export default class Navbar implements OnInit {
   readonly openAPIEnabled = signal(false);
   readonly version: string;
   readonly account = inject(AccountService).account;
+  /** La barra tiene sombra cuando la página no está arriba de todo. */
+  readonly conSombra = signal(false);
+  readonly inicial = computed(() => (this.account()?.firstName ?? this.account()?.login ?? '?').charAt(0));
+  readonly esArtista = computed(() => this.account()?.authorities.includes('ROLE_ARTISTA') ?? false);
 
   private readonly loginService = inject(LoginService);
   private readonly translateService = inject(TranslateService);
@@ -67,6 +74,10 @@ export default class Navbar implements OnInit {
   changeLanguage(languageKey: string): void {
     this.stateStorageService.storeLocale(languageKey);
     this.translateService.use(languageKey);
+  }
+
+  alScrollear(): void {
+    this.conSombra.set(window.scrollY > 8);
   }
 
   collapseNavbar(): void {

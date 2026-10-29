@@ -1,4 +1,31 @@
-<div class="footer d-flex flex-wrap gap-3 small">
-  <a routerLink="/terminos">Términos y condiciones</a>
-  <a routerLink="/arrepentimiento">Botón de arrepentimiento</a>
-</div>
+<footer class="pie">
+  <div class="container-xl">
+    <div class="row gy-4 align-items-start">
+      <div class="col-md-5">
+        <a routerLink="/" class="d-inline-block mb-3" aria-label="pasalagorra, inicio"><jhi-marca [claro]="true" /></a>
+        <p class="pie-texto">
+          Crowdfunding de recompensas para la música argentina. Todo o nada: si la campaña no llega a la meta, te devolvemos el aporte.
+        </p>
+      </div>
+      <div class="col-6 col-md-3 offset-md-1">
+        <h2 class="pie-titulo">Para fans</h2>
+        <ul class="list-unstyled">
+          <li><a routerLink="/">Explorar campañas</a></li>
+          <li><a routerLink="/account/aportes">Mis aportes</a></li>
+          <li><a routerLink="/arrepentimiento">Botón de arrepentimiento</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-md-3">
+        <h2 class="pie-titulo">Para artistas</h2>
+        <ul class="list-unstyled">
+          <li><a routerLink="/artista/solicitud">Creá tu campaña</a></li>
+          <li><a routerLink="/terminos">Términos y condiciones</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="pie-legal">
+      <span>© {{ anio }} pasalagorra</span>
+      <span>Hecho en Argentina, con pesos y con ganas.</span>
+    </div>
+  </div>
+</footer>

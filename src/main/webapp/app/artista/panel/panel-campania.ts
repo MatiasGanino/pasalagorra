@@ -51,6 +51,8 @@ export default class PanelCampania implements OnInit {
   titulo = '';
   texto = '';
 
+  readonly conRecompensa = computed(() => this.aportes().filter(a => a.recompensaId !== null).length);
+  readonly entregadas = computed(() => this.aportes().filter(a => a.entregado).length);
   readonly total = computed(() => this.aportes().reduce((suma, a) => suma + a.monto, 0));
 
   readonly resumen = computed<ResumenRecompensa[]>(() => {

@@ -1,4 +1,4 @@
-import { CurrencyPipe, DatePipe } from '@angular/common';
+import { CurrencyPipe, DOCUMENT, DatePipe, NgTemplateOutlet } from '@angular/common';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, inject, input, signal } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl, Title } from '@angular/platform-browser';
@@ -7,10 +7,11 @@ import { Router, RouterLink } from '@angular/router';
 import { serverApiUrl } from 'app/config';
 import { AccountService } from 'app/core/auth';
 import { StateStorageService } from 'app/core/auth/state-storage.service';
+import AparecerDirective from 'app/shared/efectos/aparecer.directive';
 import { mensajeDeError } from 'app/shared/errores';
 
 import { CampaniaPublica, ESTADOS_CAMPANIA, Novedad } from '../campania.model';
-import Progreso from '../progreso/progreso';
+import { textoDias } from '../progreso/progreso';
 
 /**
  * Página pública de una campaña (RF-08), con sus novedades (RF-15), y punto de partida del aporte (RF-10): el fan elige
@@ -18,8 +19,9 @@ import Progreso from '../progreso/progreso';
  */
 @Component({
   selector: 'jhi-campania-publica',
-  imports: [CurrencyPipe, DatePipe, Progreso, RouterLink],
+  imports: [CurrencyPipe, DatePipe, NgTemplateOutlet, RouterLink, AparecerDirective],
   templateUrl: './campania-publica.html',
+  styleUrl: './campania-publica.scss',
 })
 export default class CampaniaPublicaComponent implements OnInit {
   readonly slug = input.required<string>();
@@ -30,6 +32,8 @@ export default class CampaniaPublicaComponent implements OnInit {
   readonly ocupado = signal(false);
   readonly error = signal<string | null>(null);
   readonly faltaDireccion = signal(false);
+  readonly copiado = signal(false);
+  readonly textoDias = textoDias;
   readonly estados = ESTADOS_CAMPANIA;
   video: SafeResourceUrl | null = null;
 
@@ -39,6 +43,7 @@ export default class CampaniaPublicaComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly accountService = inject(AccountService);
   private readonly stateStorageService = inject(StateStorageService);
+  private readonly document = inject(DOCUMENT);
 
   ngOnInit(): void {
     this.http.get<CampaniaPublica>(`${serverApiUrl}api/public/campanias/${this.slug()}`).subscribe({
@@ -54,6 +59,29 @@ export default class CampaniaPublicaComponent implements OnInit {
     this.http
       .get<Novedad[]>(`${serverApiUrl}api/public/campanias/${this.slug()}/novedades`)
       .subscribe({ next: novedades => this.novedades.set(novedades), error: () => this.novedades.set([]) });
+  }
+
+  irARecompensas(): void {
+    this.document.getElementById('recompensas')?.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  /**
+   * Comparte el link con el menú del sistema (celular) o lo copia al portapapeles (RF-24).
+   */
+  compartir(): void {
+    const c = this.campania()!;
+    const url = this.document.location.href;
+    if (typeof navigator.share === 'function') {
+      navigator.share({ title: c.titulo, text: `Bancá "${c.titulo}" de ${c.nombreArtistico}`, url }).catch(() => undefined);
+      return;
+    }
+    navigator.clipboard
+      .writeText(url)
+      .then(() => {
+        this.copiado.set(true);
+        setTimeout(() => this.copiado.set(false), 2500);
+      })
+      .catch(() => undefined);
   }
 
   aportar(recompensaId: number | null, monto: number): void {

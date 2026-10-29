@@ -1,36 +1,80 @@
-@import 'bootstrap/scss/functions';
-@import 'bootstrap/scss/variables';
-
 /* ==========================================================================
-Navbar
+Barra de navegación: translúcida, con sombra al hacer scroll
 ========================================================================== */
 
-.navbar-version {
-  font-size: 0.65em;
-  color: $navbar-dark-color;
-}
+.barra-nav {
+  padding-block: 0.65rem;
+  background: rgba(251, 249, 246, 0.82);
+  backdrop-filter: saturate(180%) blur(14px);
+  -webkit-backdrop-filter: saturate(180%) blur(14px);
+  border-bottom: 1px solid transparent;
+  transition:
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
 
-.profile-image {
-  height: 1.75em;
-  width: 1.75em;
-}
+  /* Con el menú abierto en el celular, fondo lleno para que se lea */
+  &.abierta {
+    background: #fbf9f6;
+    box-shadow: 0 20px 40px -24px rgba(21, 18, 31, 0.45);
+  }
 
-.navbar {
-  padding: 0.2rem 1rem;
+  .navbar-toggler:focus {
+    box-shadow: none;
+  }
 
-  a.nav-link {
-    font-weight: 400;
+  .navbar-toggler:focus-visible {
+    box-shadow: 0 0 0 3px rgba(91, 61, 245, 0.35);
+  }
+
+  &.con-sombra {
+    border-bottom-color: rgba(21, 18, 31, 0.06);
+    box-shadow: 0 10px 30px -22px rgba(21, 18, 31, 0.45);
   }
 }
 
-/* ==========================================================================
-Logo styles
-========================================================================== */
-.logo-img {
-  height: 45px;
-  width: 45px;
-  display: inline-block;
-  vertical-align: middle;
-  background: url('/content/images/logo-jhipster.png') no-repeat center center;
-  background-size: contain;
+.navbar-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+
+.navbar-version {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--bs-secondary-color);
+  border: 1px solid currentColor;
+  border-radius: 50rem;
+  padding: 0.05rem 0.4rem;
+}
+
+.nav-link {
+  font-weight: 500;
+  border-radius: 0.6rem;
+  padding-inline: 0.75rem !important;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+
+  &:hover {
+    background: rgba(91, 61, 245, 0.07);
+  }
+}
+
+.nav-item.active > .nav-link {
+  color: var(--bs-primary);
+  background: rgba(91, 61, 245, 0.07);
+}
+
+.avatar {
+  display: inline-grid;
+  place-items: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  border-radius: 50%;
+  background: linear-gradient(120deg, #5b3df5, #ff5a36);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
 }
