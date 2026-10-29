@@ -191,6 +191,18 @@
                 </a>
               </li>
               <li>
+                <a
+                  class="dropdown-item"
+                  routerLink="/account/direccion-envio"
+                  routerLinkActive="active"
+                  (click)="collapseNavbar()"
+                  data-cy="direccionEnvio"
+                >
+                  <fa-icon icon="home" [fixedWidth]="true" />
+                  <span jhiTranslate="global.menu.account.direccionEnvio">Dirección de envío</span>
+                </a>
+              </li>
+              <li>
                 <a class="dropdown-item" (click)="logout()" id="logout" data-cy="logout">
                   <fa-icon icon="sign-out-alt" [fixedWidth]="true" />
                   <span jhiTranslate="global.menu.account.logout">Cerrar la sesión</span>
