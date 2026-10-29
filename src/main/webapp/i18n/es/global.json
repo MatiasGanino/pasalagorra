@@ -18,7 +18,8 @@
         "logout": "Cerrar la sesión",
         "register": "Crear una cuenta",
         "direccionEnvio": "Dirección de envío",
-        "artista": "Perfil de artista"
+        "artista": "Perfil de artista",
+        "aportes": "Mis aportes"
       },
       "admin": {
         "main": "Administración",
@@ -36,7 +37,8 @@
       },
       "language": "Idioma",
       "campanias": "Mis campañas",
-      "campania": "Campaña"
+      "campania": "Campaña",
+      "pago": "Pago"
     },
     "form": {
       "username.label": "Usuario",

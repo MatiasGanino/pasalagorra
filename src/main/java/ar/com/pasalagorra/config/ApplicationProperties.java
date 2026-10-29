@@ -19,7 +19,26 @@ public class ApplicationProperties {
 
     private final Imagenes imagenes = new Imagenes();
 
+    private final Pagos pagos = new Pagos();
+
+    /**
+     * Cada cuánto corre la tarea que cierra las campañas vencidas y reintenta reembolsos ("-" la apaga).
+     */
+    private String cierreCron = "0 */15 * * * *";
+
     // jhipster-needle-application-properties-property
+
+    public Pagos getPagos() {
+        return pagos;
+    }
+
+    public String getCierreCron() {
+        return cierreCron;
+    }
+
+    public void setCierreCron(String cierreCron) {
+        this.cierreCron = cierreCron;
+    }
 
     public BigDecimal getComisionPorcentaje() {
         return comisionPorcentaje;
@@ -48,6 +67,22 @@ public class ApplicationProperties {
 
         public void setDirectorio(String directorio) {
             this.directorio = directorio;
+        }
+    }
+
+    public static class Pagos {
+
+        /**
+         * Pasarela de pago: "simulada" hasta que se integre Mercado Pago (etapa 6).
+         */
+        private String pasarela = "simulada";
+
+        public String getPasarela() {
+            return pasarela;
+        }
+
+        public void setPasarela(String pasarela) {
+            this.pasarela = pasarela;
         }
     }
 

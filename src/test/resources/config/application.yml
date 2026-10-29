@@ -90,6 +90,8 @@ jhipster:
 # ===================================================================
 
 application:
+  # En los tests el cierre se corre a mano, no con la tarea programada
+  cierre-cron: '-'
   imagenes:
     directorio: target/test-imagenes
 management:

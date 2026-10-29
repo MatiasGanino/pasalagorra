@@ -24,7 +24,12 @@ const ERRORES: Partial<Record<string, string>> = {
   'error.entregaantesdelcierre': 'La entrega estimada de cada recompensa tiene que ser después del cierre.',
   'error.imagentipo': 'La imagen tiene que ser JPG, PNG o WebP.',
   'error.imagenesmaximas': 'Una campaña puede tener hasta 6 imágenes.',
-  'error.noenrevision': 'La campaña no está en revisión.',
+  // Aportes (RF-10 a RF-13)
+  'error.campaniacerrada': 'La campaña ya no está recibiendo aportes.',
+  'error.propiacampania': 'No podés aportar a tu propia campaña.',
+  'error.agotada': 'Esa recompensa se agotó.',
+  'error.montominimo': 'El monto es menor al mínimo de la recompensa.',
+  'error.sindireccion': 'Esta recompensa se envía por correo: cargá tu dirección de envío antes de aportar.',
 };
 
 export function mensajeDeError(error: HttpErrorResponse): string {

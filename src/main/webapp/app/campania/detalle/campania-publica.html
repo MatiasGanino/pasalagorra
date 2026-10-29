@@ -65,6 +65,15 @@
         <p class="small text-muted mt-1">{{ c.aportantes }} aportantes</p>
       </div>
 
+      @if (error(); as mensaje) {
+        <div class="alert alert-danger">
+          {{ mensaje }}
+          @if (faltaDireccion()) {
+            <a routerLink="/account/direccion-envio">Cargar mi dirección</a>
+          }
+        </div>
+      }
+
       <h2 class="h4">Recompensas</h2>
       @for (recompensa of c.recompensas; track recompensa.id) {
         <div class="card mb-3" [class.opacity-50]="recompensa.disponibles === 0">
@@ -88,10 +97,42 @@
                 }
               }
             </p>
+            @if (c.estado === 'PUBLICADA' && recompensa.disponibles !== 0) {
+              <div class="input-group mt-3">
+                <span class="input-group-text">$</span>
+                <input
+                  #monto
+                  type="number"
+                  class="form-control"
+                  [min]="recompensa.montoMinimo"
+                  [value]="recompensa.montoMinimo"
+                  aria-label="Monto del aporte"
+                />
+                <button type="button" class="btn btn-primary" [disabled]="ocupado()" (click)="aportar(recompensa.id, monto.valueAsNumber)">
+                  Aportar
+                </button>
+              </div>
+            }
           </div>
         </div>
       } @empty {
         <p class="text-muted">Esta campaña no tiene recompensas: podés hacer un aporte libre.</p>
+      }
+
+      @if (c.estado === 'PUBLICADA') {
+        <div class="card mb-3">
+          <div class="card-body">
+            <h3 class="h6">Aporte libre</h3>
+            <p class="small mb-2">Bancá el proyecto con el monto que quieras, sin recompensa.</p>
+            <div class="input-group">
+              <span class="input-group-text">$</span>
+              <input #libre type="number" class="form-control" min="100" value="1000" aria-label="Monto del aporte libre" />
+              <button type="button" class="btn btn-outline-primary" [disabled]="ocupado()" (click)="aportar(null, libre.valueAsNumber)">
+                Aportar
+              </button>
+            </div>
+          </div>
+        </div>
       }
     </div>
   </div>

@@ -189,6 +189,18 @@
               <li>
                 <a
                   class="dropdown-item"
+                  routerLink="/account/aportes"
+                  routerLinkActive="active"
+                  (click)="collapseNavbar()"
+                  data-cy="misAportes"
+                >
+                  <fa-icon icon="heart" [fixedWidth]="true" />
+                  <span jhiTranslate="global.menu.account.aportes">Mis aportes</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  class="dropdown-item"
                   routerLink="/account/settings"
                   routerLinkActive="active"
                   (click)="collapseNavbar()"

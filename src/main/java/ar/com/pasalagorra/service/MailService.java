@@ -4,6 +4,7 @@ import ar.com.pasalagorra.domain.User;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -121,6 +122,47 @@ public class MailService {
     public void sendPasswordResetMail(User user) {
         LOG.debug("Sending password reset email to '{}'", user.getEmail());
         sendEmailFromTemplateSync(user, "mail/passwordResetEmail", "email.reset.title");
+    }
+
+    /**
+     * RF-12: comprobante del aporte, cuando se confirma el pago.
+     */
+    @Async
+    public void sendComprobanteAporte(User user, String titulo, String slug, String monto, String recompensa, String referencia) {
+        LOG.debug("Sending contribution receipt to '{}'", user.getEmail());
+        Map<String, Object> variables = new HashMap<>(Map.of("titulo", titulo, "slug", slug, "monto", monto, "referencia", referencia));
+        if (recompensa != null) {
+            variables.put("recompensa", recompensa);
+        }
+        sendEmailFromTemplateSync(user, "mail/aporteComprobante", "email.aporte.comprobante.title", variables);
+    }
+
+    /**
+     * RF-13: aviso al fan de que se le devolvió el aporte, con el motivo.
+     */
+    @Async
+    public void sendReembolsoAporte(User user, String titulo, String monto, String motivo) {
+        LOG.debug("Sending refund email to '{}'", user.getEmail());
+        sendEmailFromTemplateSync(
+            user,
+            "mail/aporteReembolsado",
+            "email.aporte.reembolso.title",
+            Map.of("titulo", titulo, "monto", monto, "motivo", motivo)
+        );
+    }
+
+    /**
+     * RF-13: resultado del cierre, para el artista y (si fue exitosa) para los aportantes.
+     */
+    @Async
+    public void sendCierreCampania(User user, String titulo, String slug, boolean exitosa, String recaudado) {
+        LOG.debug("Sending campaign closing email to '{}'", user.getEmail());
+        sendEmailFromTemplateSync(
+            user,
+            "mail/campaniaCerrada",
+            exitosa ? "email.campania.exitosa.title" : "email.campania.fallida.title",
+            Map.of("titulo", titulo, "slug", slug, "exitosa", exitosa, "recaudado", recaudado)
+        );
     }
 
     /**

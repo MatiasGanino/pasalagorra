@@ -1,0 +1,29 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}" lang="es">
+  <head>
+    <title th:text="#{email.aporte.comprobante.title}">Comprobante</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  </head>
+  <body>
+    <p th:text="#{email.activation.greeting(${user.login})}">Estimado/a</p>
+    <p>¡Gracias por bancar <strong th:text="${titulo}">la campaña</strong>! Registramos tu aporte:</p>
+    <ul>
+      <li>Monto: <strong th:text="${monto}">$ 15.000</strong></li>
+      <li th:if="${recompensa}">Recompensa: <span th:text="${recompensa}">recompensa</span></li>
+      <li th:unless="${recompensa}">Aporte libre, sin recompensa</li>
+      <li>Comprobante: <span th:text="${referencia}">referencia</span></li>
+    </ul>
+    <p>
+      Es una campaña todo o nada: si al cierre no llega a la meta, te devolvemos el aporte completo. Podés seguirla y ver tus aportes en el
+      sitio:
+    </p>
+    <p>
+      <a th:with="url=(@{|${baseUrl}/campania/${slug}|})" th:href="${url}" th:text="${url}">Ver campaña</a>
+    </p>
+    <p>
+      <span th:text="#{email.activation.text2}">Saludos,</span>
+      <br />
+      <em th:text="#{email.signature}">Equipo de pasalagorra.</em>
+    </p>
+  </body>
+</html>

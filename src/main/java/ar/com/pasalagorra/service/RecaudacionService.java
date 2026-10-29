@@ -1,6 +1,8 @@
 package ar.com.pasalagorra.service;
 
+import ar.com.pasalagorra.repository.AporteRepository;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,16 +14,23 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class RecaudacionService {
 
-    public record Totales(BigDecimal recaudado, long aportantes) {
-        public static final Totales CERO = new Totales(BigDecimal.ZERO, 0);
+    private final AporteRepository aporteRepository;
 
+    public RecaudacionService(AporteRepository aporteRepository) {
+        this.aporteRepository = aporteRepository;
+    }
+
+    public record Totales(BigDecimal recaudado, long aportantes) {
         public int porcentajeDe(BigDecimal meta) {
-            return recaudado.multiply(BigDecimal.valueOf(100)).divide(meta, 0, java.math.RoundingMode.DOWN).intValue();
+            return recaudado.multiply(BigDecimal.valueOf(100)).divide(meta, 0, RoundingMode.DOWN).intValue();
+        }
+
+        public boolean alcanza(BigDecimal meta) {
+            return recaudado.compareTo(meta) >= 0;
         }
     }
 
     public Totales totales(Long campaniaId) {
-        // Los aportes llegan en la etapa 3.
-        return Totales.CERO;
+        return new Totales(aporteRepository.sumarAprobados(campaniaId), aporteRepository.contarAportantes(campaniaId));
     }
 }

@@ -1,0 +1,26 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}" lang="es">
+  <head>
+    <title th:text="${exitosa} ? #{email.campania.exitosa.title} : #{email.campania.fallida.title}">Cierre</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  </head>
+  <body>
+    <p th:text="#{email.activation.greeting(${user.login})}">Estimado/a</p>
+    <p th:if="${exitosa}">
+      ¡<strong th:text="${titulo}">La campaña</strong> llegó a la meta! Se recaudaron <strong th:text="${recaudado}">$ 0</strong>. Las
+      recompensas se entregan en las fechas estimadas y el artista va a publicar las novedades en la campaña.
+    </p>
+    <p th:unless="${exitosa}">
+      <strong th:text="${titulo}">La campaña</strong> cerró sin llegar a la meta (se juntaron <strong th:text="${recaudado}">$ 0</strong>).
+      Como es todo o nada, les devolvemos el aporte a todos los que participaron.
+    </p>
+    <p>
+      <a th:with="url=(@{|${baseUrl}/campania/${slug}|})" th:href="${url}" th:text="${url}">Ver campaña</a>
+    </p>
+    <p>
+      <span th:text="#{email.activation.text2}">Saludos,</span>
+      <br />
+      <em th:text="#{email.signature}">Equipo de pasalagorra.</em>
+    </p>
+  </body>
+</html>

@@ -1,0 +1,20 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}" lang="es">
+  <head>
+    <title th:text="#{email.aporte.reembolso.title}">Reembolso</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  </head>
+  <body>
+    <p th:text="#{email.activation.greeting(${user.login})}">Estimado/a</p>
+    <p>
+      Te devolvimos tu aporte de <strong th:text="${monto}">$ 15.000</strong> a <strong th:text="${titulo}">la campaña</strong> porque
+      <span th:text="${motivo}">motivo</span>.
+    </p>
+    <p>El reembolso vuelve al mismo medio de pago; según el medio, puede tardar unos días en verse.</p>
+    <p>
+      <span th:text="#{email.activation.text2}">Saludos,</span>
+      <br />
+      <em th:text="#{email.signature}">Equipo de pasalagorra.</em>
+    </p>
+  </body>
+</html>
