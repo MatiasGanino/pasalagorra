@@ -1,0 +1,32 @@
+# ===================================================================
+# Spring Boot configuration.
+#
+# Configuración de los tests de integración: usan una base PostgreSQL real, sin Docker.
+# Por defecto la base local pasalagorra_test; en el CI se pisa con TEST_DB_URL, TEST_DB_USERNAME y TEST_DB_PASSWORD.
+# ===================================================================
+
+spring:
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    url: ${TEST_DB_URL:jdbc:postgresql://localhost:5432/pasalagorra_test}
+    username: ${TEST_DB_USERNAME:pasalagorra}
+    password: ${TEST_DB_PASSWORD:pasalagorra}
+    hikari:
+      poolName: Hikari
+      auto-commit: false
+      maximum-pool-size: 2 # con 1, Flyway se queda esperando una segunda conexión y no arranca ningún IT
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate.id.new_generator_mappings: true
+      hibernate.connection.provider_disables_autocommit: true
+      hibernate.cache.use_second_level_cache: false
+      hibernate.cache.use_query_cache: false
+      hibernate.generate_statistics: false
+      hibernate.hbm2ddl.auto: none #TODO: temp relief for integration tests, revisit required
+      hibernate.type.preferred_instant_jdbc_type: TIMESTAMP
+      hibernate.jdbc.time_zone: UTC
+      hibernate.timezone.default_storage: NORMALIZE
+      hibernate.query.fail_on_pagination_over_collection_fetch: true

@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      # El runner de Ubuntu ya trae PostgreSQL: los tests de integración usan una base real, sin Docker.
+      - name: Base de prueba
+        run: |
+          sudo systemctl start postgresql.service
+          sudo -u postgres psql -c "CREATE ROLE pasalagorra LOGIN PASSWORD 'pasalagorra'"
+          sudo -u postgres psql -c "CREATE DATABASE pasalagorra_test OWNER pasalagorra"
+
+      - name: Frontend (lint y tests)
+        run: |
+          npm ci
+          npm test
+
+      - name: Backend (unitarios e integración)
+        run: ./mvnw -ntp --batch-mode -Dskip.npm -Dskip.installnodenpm verify

@@ -1,0 +1,19 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "backend-dev",
+      "runtimeExecutable": "cmd",
+      "runtimeArgs": ["/c", "set JAVA_HOME=%USERPROFILE%\\.jdks\\ms-21.0.12.1&& .\\mvnw.cmd -Dskip.npm -Dskip.installnodenpm"],
+      "port": 8080,
+      "url": "http://localhost:8080"
+    },
+    {
+      "name": "angular-dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["start", "--", "--open=false"],
+      "port": 4200,
+      "url": "http://localhost:4200"
+    }
+  ]
+}
