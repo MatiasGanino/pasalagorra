@@ -5,6 +5,7 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -87,12 +88,16 @@ public class MailService {
     }
 
     private void sendEmailFromTemplateSync(User user, String templateName, String titleKey) {
+        sendEmailFromTemplateSync(user, templateName, titleKey, Map.of());
+    }
+
+    private void sendEmailFromTemplateSync(User user, String templateName, String titleKey, Map<String, Object> variables) {
         if (user.getEmail() == null) {
             LOG.debug("Email doesn't exist for user '{}'", user.getLogin());
             return;
         }
         Locale locale = Locale.forLanguageTag(user.getLangKey());
-        Context context = new Context(locale);
+        Context context = new Context(locale, variables);
         context.setVariable(USER, user);
         context.setVariable(BASE_URL, jHipsterProperties.getMail().getBaseUrl());
         String content = templateEngine.process(templateName, context);
@@ -116,5 +121,28 @@ public class MailService {
     public void sendPasswordResetMail(User user) {
         LOG.debug("Sending password reset email to '{}'", user.getEmail());
         sendEmailFromTemplateSync(user, "mail/passwordResetEmail", "email.reset.title");
+    }
+
+    /**
+     * RF-03: aviso al artista de que su alta se aprobó, o se rechazó con {@code motivoRechazo}.
+     */
+    @Async
+    public void sendRevisionArtistaEmail(User user, String nombreArtistico, String motivoRechazo) {
+        LOG.debug("Sending artist review email to '{}'", user.getEmail());
+        if (motivoRechazo == null) {
+            sendEmailFromTemplateSync(
+                user,
+                "mail/artistaAprobado",
+                "email.artista.aprobado.title",
+                Map.of("nombreArtistico", nombreArtistico)
+            );
+        } else {
+            sendEmailFromTemplateSync(
+                user,
+                "mail/artistaRechazado",
+                "email.artista.rechazado.title",
+                Map.of("nombreArtistico", nombreArtistico, "motivo", motivoRechazo)
+            );
+        }
     }
 }

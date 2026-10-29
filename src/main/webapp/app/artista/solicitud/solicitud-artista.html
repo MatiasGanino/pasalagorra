@@ -1,0 +1,90 @@
+<div class="d-flex justify-content-center">
+  <div class="col-md-8">
+    <h2>Perfil de artista</h2>
+
+    @if (!cargando()) {
+      @let actual = artista();
+      @if (actual === null) {
+        <p class="text-muted">
+          Para crear campañas necesitás una cuenta de artista. Completá tus datos: los revisamos y te avisamos por mail cuando esté
+          aprobada.
+        </p>
+      } @else {
+        <p>
+          Estado:
+          <span class="badge {{ estados[actual.estado].clase }}">{{ estados[actual.estado].texto }}</span>
+        </p>
+        @if (actual.estado === 'RECHAZADO') {
+          <div class="alert alert-danger">
+            <strong>No pudimos aprobar tu solicitud:</strong> {{ actual.motivoRechazo }}<br />
+            Corregí los datos y volvé a enviarla.
+          </div>
+        }
+        @if (actual.estado === 'APROBADO') {
+          <div class="alert alert-success">
+            Tu cuenta de artista está aprobada. Si todavía no ves las opciones de artista, cerrá la sesión y volvé a entrar.
+          </div>
+        }
+      }
+
+      @if (enviada()) {
+        <div class="alert alert-success"><strong>¡Solicitud enviada!</strong> Te avisamos por mail cuando la revisemos.</div>
+      }
+      @if (error(); as mensaje) {
+        <div class="alert alert-danger">{{ mensaje }}</div>
+      }
+
+      <form name="form" (ngSubmit)="enviar()" [formGroup]="form" novalidate>
+        <div class="mb-3">
+          <label class="form-label" for="nombreArtistico">Nombre artístico</label>
+          <input type="text" class="form-control" id="nombreArtistico" formControlName="nombreArtistico" />
+          <small class="form-text text-muted">El nombre de la banda o con el que firmás tus canciones.</small>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="nombreCompleto">Nombre y apellido</label>
+          <input type="text" class="form-control" id="nombreCompleto" formControlName="nombreCompleto" />
+          <small class="form-text text-muted">Como figuran en tu DNI.</small>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label" for="dni">DNI</label>
+            <input type="text" class="form-control" id="dni" formControlName="dni" inputmode="numeric" />
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label" for="cuit">CUIT</label>
+            <input type="text" class="form-control" id="cuit" formControlName="cuit" placeholder="20-12345678-9" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label" for="ciudad">Ciudad</label>
+            <input type="text" class="form-control" id="ciudad" formControlName="ciudad" />
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label" for="provincia">Provincia</label>
+            <select class="form-select" id="provincia" formControlName="provincia">
+              <option value="" disabled>Elegí una provincia</option>
+              @for (provincia of provincias; track provincia) {
+                <option [value]="provincia">{{ provincia }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="biografia">Biografía <small class="text-muted">(opcional)</small></label>
+          <textarea class="form-control" id="biografia" rows="4" formControlName="biografia"></textarea>
+        </div>
+
+        @if (editable()) {
+          <button type="submit" [disabled]="form.invalid" class="btn btn-primary">
+            {{ artista() === null ? 'Enviar solicitud' : 'Volver a enviar' }}
+          </button>
+        }
+      </form>
+    }
+  </div>
+</div>

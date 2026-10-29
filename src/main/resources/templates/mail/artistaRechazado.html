@@ -1,0 +1,24 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}" lang="es">
+  <head>
+    <title th:text="#{email.artista.rechazado.title}">Solicitud de artista con cambios</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  </head>
+  <body>
+    <p th:text="#{email.activation.greeting(${user.login})}">Estimado/a</p>
+    <p>
+      Revisamos tu solicitud de artista como <strong th:text="${nombreArtistico}">nombre artístico</strong> y no la pudimos aprobar por este
+      motivo:
+    </p>
+    <blockquote th:text="${motivo}">motivo</blockquote>
+    <p>Podés corregir los datos y volver a enviarla desde tu perfil de artista:</p>
+    <p>
+      <a th:with="url=(@{|${baseUrl}/artista/solicitud|})" th:href="${url}" th:text="${url}">Perfil de artista</a>
+    </p>
+    <p>
+      <span th:text="#{email.activation.text2}">Saludos,</span>
+      <br />
+      <em th:text="#{email.signature}">Equipo de pasalagorra.</em>
+    </p>
+  </body>
+</html>

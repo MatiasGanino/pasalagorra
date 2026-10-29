@@ -1,0 +1,53 @@
+<div class="d-flex justify-content-center">
+  <div class="col-md-8">
+    @if (artista(); as artista) {
+      <h2>{{ artista.nombreArtistico }}</h2>
+      <p>
+        <span class="badge {{ estados[artista.estado].clase }}">{{ estados[artista.estado].texto }}</span>
+      </p>
+
+      @if (error(); as mensaje) {
+        <div class="alert alert-danger">{{ mensaje }}</div>
+      }
+
+      <dl class="row">
+        <dt class="col-sm-4">Nombre y apellido</dt>
+        <dd class="col-sm-8">{{ artista.nombreCompleto }}</dd>
+        <dt class="col-sm-4">DNI</dt>
+        <dd class="col-sm-8">{{ artista.dni }}</dd>
+        <dt class="col-sm-4">CUIT</dt>
+        <dd class="col-sm-8">{{ artista.cuit }}</dd>
+        <dt class="col-sm-4">Ciudad</dt>
+        <dd class="col-sm-8">{{ artista.ciudad }}, {{ artista.provincia }}</dd>
+        <dt class="col-sm-4">Usuario</dt>
+        <dd class="col-sm-8">{{ artista.login }} ({{ artista.email }})</dd>
+        <dt class="col-sm-4">Solicitud</dt>
+        <dd class="col-sm-8">{{ artista.fechaSolicitud | date: 'dd/MM/yyyy HH:mm' }}</dd>
+        @if (artista.fechaRevision) {
+          <dt class="col-sm-4">Revisión</dt>
+          <dd class="col-sm-8">{{ artista.fechaRevision | date: 'dd/MM/yyyy HH:mm' }}</dd>
+        }
+        @if (artista.motivoRechazo) {
+          <dt class="col-sm-4">Motivo del rechazo</dt>
+          <dd class="col-sm-8">{{ artista.motivoRechazo }}</dd>
+        }
+        <dt class="col-sm-4">Biografía</dt>
+        <dd class="col-sm-8">{{ artista.biografia ?? '—' }}</dd>
+      </dl>
+
+      @if (artista.estado === 'PENDIENTE') {
+        <p class="text-muted">Antes de aprobar, verificá que el CUIT exista y corresponda a esa persona (constancia de CUIT de ARCA).</p>
+        <button type="button" class="btn btn-success mb-4" (click)="aprobar()">Aprobar</button>
+
+        <div class="mb-3">
+          <label class="form-label" for="motivo">Motivo del rechazo</label>
+          <textarea class="form-control" id="motivo" rows="3" maxlength="500" [(ngModel)]="motivo"></textarea>
+          <small class="form-text text-muted">Se le manda al artista por mail para que corrija la solicitud.</small>
+        </div>
+        <button type="button" class="btn btn-danger" [disabled]="!motivo.trim()" (click)="rechazar()">Rechazar</button>
+      }
+
+      <p class="mt-4"><a routerLink="/admin/artistas">← Volver a la lista</a></p>
+    }
+  </div>
+</div>

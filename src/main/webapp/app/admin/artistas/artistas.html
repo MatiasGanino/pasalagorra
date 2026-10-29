@@ -1,0 +1,48 @@
+<div>
+  <h2>Artistas</h2>
+
+  <ul class="nav nav-tabs mb-3">
+    @for (filtro of filtros; track filtro) {
+      <li class="nav-item">
+        <button type="button" class="nav-link" [class.active]="estado() === filtro" (click)="filtrar(filtro)">
+          {{ estados[filtro].texto }}
+        </button>
+      </li>
+    }
+  </ul>
+
+  @if (artistas().length === 0) {
+    <p class="text-muted">No hay solicitudes en este estado.</p>
+  } @else {
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th scope="col">Nombre artístico</th>
+            <th scope="col">Nombre y apellido</th>
+            <th scope="col">Usuario</th>
+            <th scope="col">Ciudad</th>
+            <th scope="col">Solicitud</th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (artista of artistas(); track artista.id) {
+            <tr>
+              <td>{{ artista.nombreArtistico }}</td>
+              <td>{{ artista.nombreCompleto }}</td>
+              <td>{{ artista.login }}</td>
+              <td>{{ artista.ciudad }}, {{ artista.provincia }}</td>
+              <td>{{ artista.fechaSolicitud | date: 'dd/MM/yyyy HH:mm' }}</td>
+              <td class="text-end">
+                <a class="btn btn-sm btn-outline-primary" [routerLink]="['/admin/artistas', artista.id]">
+                  {{ artista.estado === 'PENDIENTE' ? 'Revisar' : 'Ver' }}
+                </a>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

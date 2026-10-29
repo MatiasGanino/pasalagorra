@@ -1,0 +1,22 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}" lang="es">
+  <head>
+    <title th:text="#{email.artista.aprobado.title}">Cuenta de artista aprobada</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  </head>
+  <body>
+    <p th:text="#{email.activation.greeting(${user.login})}">Estimado/a</p>
+    <p>
+      Aprobamos tu cuenta de artista como <strong th:text="${nombreArtistico}">nombre artístico</strong>. Cerrá la sesión y volvé a entrar
+      para empezar a usarla.
+    </p>
+    <p>
+      <a th:with="url=(@{|${baseUrl}/login|})" th:href="${url}" th:text="${url}">Iniciar sesión</a>
+    </p>
+    <p>
+      <span th:text="#{email.activation.text2}">Saludos,</span>
+      <br />
+      <em th:text="#{email.signature}">Equipo de pasalagorra.</em>
+    </p>
+  </body>
+</html>

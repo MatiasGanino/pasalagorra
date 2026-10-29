@@ -17,7 +17,8 @@
         "login": "Iniciar sesión",
         "logout": "Cerrar la sesión",
         "register": "Crear una cuenta",
-        "direccionEnvio": "Dirección de envío"
+        "direccionEnvio": "Dirección de envío",
+        "artista": "Perfil de artista"
       },
       "admin": {
         "main": "Administración",
@@ -29,7 +30,8 @@
         "logs": "Logs",
         "apidocs": "API",
         "database": "Base de datos",
-        "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)"
+        "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)",
+        "artistas": "Artistas"
       },
       "language": "Idioma"
     },

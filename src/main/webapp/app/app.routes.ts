@@ -29,6 +29,10 @@ const routes: Routes = [
     loadChildren: () => import('./account/account.route'),
   },
   {
+    path: 'artista',
+    loadChildren: () => import('./artista/artista.routes'),
+  },
+  {
     path: 'login',
     loadComponent: () => import('./login/login'),
     title: 'login.title',

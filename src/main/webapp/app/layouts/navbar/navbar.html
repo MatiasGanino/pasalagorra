@@ -87,6 +87,12 @@
             </li>
             <!-- jhipster-needle-add-element-to-admin-menu - JHipster will add entities to the admin menu here -->
             <li>
+              <a class="dropdown-item" routerLink="/admin/artistas" routerLinkActive="active" (click)="collapseNavbar()">
+                <fa-icon icon="users" [fixedWidth]="true" />
+                <span jhiTranslate="global.menu.admin.artistas">Artistas</span>
+              </a>
+            </li>
+            <li>
               <a class="dropdown-item" routerLink="/admin/metrics" routerLinkActive="active" (click)="collapseNavbar()">
                 <fa-icon icon="tachometer-alt" [fixedWidth]="true" />
                 <span jhiTranslate="global.menu.admin.metrics">Métricas</span>
@@ -200,6 +206,18 @@
                 >
                   <fa-icon icon="home" [fixedWidth]="true" />
                   <span jhiTranslate="global.menu.account.direccionEnvio">Dirección de envío</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  class="dropdown-item"
+                  routerLink="/artista/solicitud"
+                  routerLinkActive="active"
+                  (click)="collapseNavbar()"
+                  data-cy="perfilArtista"
+                >
+                  <fa-icon icon="star" [fixedWidth]="true" />
+                  <span jhiTranslate="global.menu.account.artista">Perfil de artista</span>
                 </a>
               </li>
               <li>
